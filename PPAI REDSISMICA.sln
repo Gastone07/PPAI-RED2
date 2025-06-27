@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.14.36109.1 d17.14
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PPAI REDSISMICA", "PPAI REDSISMICA.csproj", "{E90C590A-DBF4-4FB5-AB7E-55C172916F1D}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{E90C590A-DBF4-4FB5-AB7E-55C172916F1D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E90C590A-DBF4-4FB5-AB7E-55C172916F1D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E90C590A-DBF4-4FB5-AB7E-55C172916F1D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E90C590A-DBF4-4FB5-AB7E-55C172916F1D}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {008E9F1E-CFEF-4268-B9B6-8C2FA11724CA}
+	EndGlobalSection
+EndGlobal

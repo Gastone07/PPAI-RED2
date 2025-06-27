@@ -1,0 +1,52 @@
+<Window x:Class="Vistas.pantallaRegistrarResultadoRevisionManual"  
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"  
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"  
+        Title="Registrar Resultado Revisión Manual" Height="575" Width="825">
+    <StackPanel Margin="20">
+        <!-- Título -->
+        <TextBlock Text="Eventos Sismicos" FontSize="22" FontWeight="Bold" Margin="0,0,0,10" HorizontalAlignment="Center"/>
+        <DataGrid x:Name="dgEventosSismicos" AutoGenerateColumns="False" MouseDoubleClick="dgEventosSismicos_MouseDoubleClick"
+                  IsReadOnly="True" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch" Height="160">
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="Fecha Inicio" Binding="{Binding FechaInicio}" />
+                <DataGridTextColumn Header="Fecha Fin" Binding="{Binding FechaFin}" />
+                <DataGridTextColumn Header="Magnitud" Binding="{Binding Magnitud}" />
+                <DataGridTextColumn Header="Lat. Epicentro" Binding="{Binding LatitudEpicentro}" />
+                <DataGridTextColumn Header="Lon. Epicentro" Binding="{Binding LongitudEpicentro}" />
+                <DataGridTextColumn Header="Lat. Hipocentro" Binding="{Binding LatitudHipocentro}" />
+                <DataGridTextColumn Header="Lon. Hipocentro" Binding="{Binding LongitudHipocentro}" />
+            </DataGrid.Columns>
+        </DataGrid>
+
+        <!-- DataGrid más corto en Y -->
+
+        <!-- Detalles del evento, ocultos por defecto -->
+        <StackPanel x:Name="panelDetalles" Orientation="Horizontal" Visibility="Collapsed" Margin="10">
+            <!-- Panel de detalles existente -->
+            <StackPanel Width="250" Margin="0,0,20,0">
+                <TextBlock Text="Alcance:" FontWeight="Bold"/>
+                <TextBox x:Name="txtAlcance"  Margin="0,0,0,10"/>
+                <TextBlock Text="Clasificación:" FontWeight="Bold"/>
+                <TextBox x:Name="txtClasificacion" IsReadOnly="True" Margin="0,0,0,10"/>
+                <TextBlock Text="Origen:" FontWeight="Bold"/>
+                <TextBox x:Name="txtOrigen"  Margin="0,0,0,10"/>
+                <TextBlock Text="Magnitud:" FontWeight="Bold"/>
+                <TextBox x:Name="txtMagnitud"  Margin="0,0,0,10"/>
+                <Button x:Name="btnVisualizarMapa" Content="Visualizar Mapa" Width="150" Height="35" Margin="0,10,0,0" Click="btnVisualizarMapa_Click"/>
+                <TextBlock Text="Seleccione una opción:" FontWeight="Bold" Margin="0,20,0,5"/>
+                <ComboBox x:Name="cbOpciones" Width="200" Margin="0,0,0,10" SelectionChanged="cbOpciones_SelectionChanged">
+                    <ComboBoxItem Content="Confirmar evento"/>
+                    <ComboBoxItem Content="Rechazar evento"/>
+                    <ComboBoxItem Content="Solicitar revisión a experto"/>
+                </ComboBox>
+            </StackPanel>
+            <!-- Panel para la imagen y el título -->
+            <StackPanel Width="300" HorizontalAlignment="Left">
+                <TextBlock Text="Sismografo" FontWeight="Bold" FontSize="16" Margin="0,0,0,10" HorizontalAlignment="Center"/>
+                <Image Source="/img/sismografo2.jpg" Width="180" Height="120" Stretch="Uniform" HorizontalAlignment="Center"/>
+                <Image x:Name="imgMapa" Width="250" Height="180" Visibility="Collapsed" Margin="0,20,0,0"/>
+                <Button x:Name="btnConfirmar" Content="Confirmar" Width="120" Height="35" Margin="0,20,0,0" IsEnabled="False" Click="btnConfirmar_Click"/>
+            </StackPanel>
+        </StackPanel>
+    </StackPanel>
+</Window>

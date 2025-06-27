@@ -1,0 +1,237 @@
+using PPAI_REDSISMICA.Entidades;
+using PPAI_REDSISMICA.Persistencia;
+using System.Collections.Generic;
+using System.Security.Cryptography.X509Certificates;
+using System.Windows.Documents;
+using Vistas;
+
+namespace Controladores
+{
+    public class controladorRegistrarResultadoRevisionManual
+    {
+        #region aributos
+
+        private readonly pantallaRegistrarResultadoRevisionManual pantalla;
+        // Declarar una variable que contenga un listado de eventos sísmicos
+        private List<EventoSismico> eventosSismicos = new List<EventoSismico>();
+
+        private List<EventoSismico> eventosPendientes = new List<EventoSismico>();
+
+        private Estado estadoBloqueado = new Estado();
+
+        private Usuario usuarioLogeado = new Usuario();
+
+        private EventoSismico eventoSelec = new EventoSismico();
+
+        private List<Estado> listadoEstado = new List<Estado>();
+
+        private List<Sesion> listadoSesiones = new List<Sesion>();
+
+        private DateTime fechaHoraActual;
+
+        private List<CambioEstado> listadoCambiosEstado = new List<CambioEstado>();
+
+        private CambioEstado cambioEstadoAbierto = new CambioEstado();
+
+        private CambioEstado cambioEstadoNuevo = new CambioEstado();
+
+        private string nombreAlcance = "";
+        private string nombreClasificacion = "";
+        private string nombreOrigen = "";
+
+        private List<SerieTemporal> seriesVisitadas = new List<SerieTemporal>();
+        private List<MuestraSismica> muestrasVisitadas = new List<MuestraSismica>();
+        private List<DetalleMuestraSismica> detallesVisitados = new List<DetalleMuestraSismica>();
+        private List<(DetalleMuestraSismica, TipoDeDato)> tipoDatoPorDetalle = new List<(DetalleMuestraSismica, TipoDeDato)>();
+
+        private List<Sismografo> sismografos = new List<Sismografo>();
+        private string nombreEstacion = "";
+
+        private Estado estadoSeleccionado = new Estado();
+
+        #endregion
+        //Paso 1 del Caso de Uso
+        public controladorRegistrarResultadoRevisionManual(pantallaRegistrarResultadoRevisionManual pan)
+        {
+            this.pantalla = pan;
+        }
+
+        public void registrarResultadoDeRevisionManual()
+        {
+            // Cargar los datos iniciales y asignarlos a los atributos del controlador
+            (eventosSismicos, listadoEstado, listadoCambiosEstado, listadoSesiones, sismografos) = Persistencia.ObtenerDatos();
+
+            buscarAutodetectado();
+        }
+
+        public void buscarAutodetectado()
+        {
+            // Filtrar los eventos que son NoRevisados directamente en el controlador
+            eventosPendientes.Clear(); // Limpiar la lista de eventos pendientes antes de agregar nuevos
+
+            foreach (var evento in eventosSismicos)
+            {
+                if (evento.esPendienteDeRevision())
+                {
+                    eventosPendientes.Add(evento);
+                }
+            }
+
+            // Pasar la lista de eventos sísmicos a la pantalla
+            pantalla.presentarEventosSismicosPendientesDeRevision(eventosPendientes);
+        }
+
+        public void tomarSeleccionEventoSismico(EventoSismico eventoSeleccionado)
+        {
+            // paso 7 caso de uso
+            // busco el puntero de la para el estado bloqueado
+            eventoSelec = eventoSeleccionado;
+            //estadoBloqueado = buscarEstadoBloqueado(listadoEstado);
+
+            buscarEstadoBloqueado();
+            //busco el usuario logueado en ese momento
+            usuarioLogeado = buscarUsuarioLogeado();
+
+            //getFechaHoraActual
+            fechaHoraActual = getFechaYHoraActual();
+
+            actualizarCambioEstado(eventoSeleccionado);
+
+        }
+
+        public DateTime getFechaYHoraActual()
+        {
+            // Retorna la fecha y hora actual del sistema
+            return DateTime.Now;
+        }
+
+        public void buscarEstadoBloqueado()
+        {
+            foreach (Estado estado in listadoEstado)
+            {
+                if (estado.esAmbitoEvento() && estado.esEstadoBloqueado())
+                {
+                    estadoBloqueado = estado; // Asignar el estado bloqueado encontrado
+                    break; // Salir del bucle una vez encontrado
+                }
+            }
+            
+        }
+
+        private Usuario buscarUsuarioLogeado()
+        {
+            foreach (var sesion in listadoSesiones)
+            {
+                if (sesion.fechaHoraFin == null)
+                {
+                    return sesion.obtenerUsuarioLogeado(); // Retorna el usuario encontrado
+                }
+            }
+            return null; // Si no se encuentra un usuario logueado
+        }
+
+        // paso 8 del caso de uso seria nuestro revisar()
+        private void actualizarCambioEstado(EventoSismico eventoSeleccionado)
+        {
+            //cambio estado del evento para bloquearlo PASO 8 del caso de uso
+            cambioEstadoAbierto = eventoSeleccionado.buscarCambioEstadoAbierto(fechaHoraActual);
+
+            cambioEstadoNuevo = eventoSeleccionado.crearCambioEstado(estadoBloqueado, fechaHoraActual);
+            
+            listadoCambiosEstado.Add(cambioEstadoNuevo);
+
+            //fin paso 8
+            buscarDetallesEventoSismico(eventoSeleccionado);
+        }
+
+        // paso 9 del caso
+        public void buscarDetallesEventoSismico(EventoSismico eventoSeleccionado)
+        {
+            //guardo los valores de los detalles del evento sismico
+            (nombreAlcance, nombreClasificacion, nombreOrigen) = eventoSeleccionado.getDetallesEventoSismico();
+
+            obtenerDatosSeriesTemporal(eventoSeleccionado);
+            generarSismograma(seriesVisitadas, muestrasVisitadas, detallesVisitados, tipoDatoPorDetalle);
+
+            pantalla.mostrarDetalleEventoSismico(nombreAlcance, nombreClasificacion, nombreOrigen, eventoSeleccionado.ValorMagnitud);
+
+        }
+        public void obtenerDatosSeriesTemporal(EventoSismico eventoSeleccionado)
+        {
+            //limpio las listas para evitar duplicados
+            seriesVisitadas.Clear();
+            muestrasVisitadas.Clear();
+            detallesVisitados.Clear();
+            tipoDatoPorDetalle.Clear();
+
+            //Obtengo las series Temporales
+            seriesVisitadas = eventoSeleccionado.buscarSeriesTemporal();
+            foreach (SerieTemporal serie in seriesVisitadas)
+            {
+                //obtengo los datos de cada serie temporal
+                serie.getDatos(muestrasVisitadas, detallesVisitados, tipoDatoPorDetalle);
+
+                //recorro las sismografos para saber a cual pertenece cada serie temporal
+                foreach (Sismografo sismografo in sismografos)
+                {
+                    foreach (SerieTemporal serieSismografo in sismografo.getSeriesTemporales())
+                    {
+                        if (serieSismografo.Equals(serie)) // Compara la serie temporal del sismografo con la serie temporal del evento sismico
+                        {
+                            // Si son iguales, se puede obtener el nombre de la estación del sismógrafo
+                            nombreEstacion = sismografo.getNombreEstacion(); // Obtiene el nombre de la estación del sismógrafo                           
+                            break; // Salir del bucle una vez encontrado
+                        }
+                    }
+                }
+            }            
+        }
+
+        public void generarSismograma(List<SerieTemporal> seriesVisitadas, 
+                                        List<MuestraSismica> muestrasVisitadas, 
+                                        List<DetalleMuestraSismica> detallesVisitados, 
+                                        List<(DetalleMuestraSismica, TipoDeDato)> tipoDatoPorDetalle)
+        {
+            //Generar Sismograma
+            //aca llamamos al CU externo
+
+        }
+
+        public void tomarOpcionGrilla(string opcionCombo, string alcance, string origen, double magnitud)
+        {
+            //paso 14 al 17 con alternativas
+            if (opcionCombo == "Rechazar evento")
+            {
+                estadoSeleccionado = Estado.esRechazado(listadoEstado);
+                cambioEstadoAbierto = eventoSelec.buscarCambioEstadoAbierto(fechaHoraActual);
+                
+                cambioEstadoNuevo = eventoSelec.crearCambioEstado(estadoSeleccionado, fechaHoraActual);
+                listadoCambiosEstado.Add(cambioEstadoNuevo);
+            }
+            else if (opcionCombo == "Confirmar evento")
+            {
+                estadoSeleccionado = Estado.esConfirmado(listadoEstado);
+                cambioEstadoAbierto = eventoSelec.buscarCambioEstadoAbierto(fechaHoraActual);
+                
+                cambioEstadoNuevo = eventoSelec.crearCambioEstado(estadoSeleccionado, fechaHoraActual);
+                listadoCambiosEstado.Add(cambioEstadoNuevo);
+            }
+            else if (opcionCombo == "Solicitar revisión a experto")
+            {
+                estadoSeleccionado = Estado.esRevisadoExperto(listadoEstado);
+                cambioEstadoAbierto = eventoSelec.buscarCambioEstadoAbierto(fechaHoraActual);
+                
+                cambioEstadoNuevo = eventoSelec.crearCambioEstado(estadoSeleccionado, fechaHoraActual);
+                listadoCambiosEstado.Add(cambioEstadoNuevo);
+            }
+            else
+            {
+                // Manejar caso no válido
+                throw new ArgumentException("Opción no válida");
+            }
+            buscarAutodetectado();
+        }
+        
+    }
+    
+}

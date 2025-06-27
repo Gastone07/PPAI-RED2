@@ -1,0 +1,10 @@
+<Window x:Class="PPAI_REDSISMICA.VentanaRevisionManual"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Registrar resultado de revisión manual" Height="300" Width="500">
+    <Grid>
+        <!-- Aquí puedes desarrollar el CU -->
+        <TextBlock Text="Aquí se desarrollará el caso de uso de revisión manual." 
+                   VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="16"/>
+    </Grid>
+</Window>
