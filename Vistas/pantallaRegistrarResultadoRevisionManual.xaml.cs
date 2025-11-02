@@ -30,8 +30,8 @@ namespace Vistas
 
         private void btnAceptar_Click(object sender, RoutedEventArgs e)
         {
-            // Aquí puedes agregar la lógica para procesar el resultado y observaciones
-            MessageBox.Show("Resultado registrado correctamente.", "Información", MessageBoxButton.OK, MessageBoxImage.Information);
+            // Aquï¿½ puedes agregar la lï¿½gica para procesar el resultado y observaciones
+            MessageBox.Show("Resultado registrado correctamente.", "Informaciï¿½n", MessageBoxButton.OK, MessageBoxImage.Information);
             this.DialogResult = true;
             this.Close();
         }
@@ -42,51 +42,71 @@ namespace Vistas
             this.Close();
         }
 
-        public void presentarEventosSismicosPendientesDeRevision(List<EventoSismico> eventosPreparados)
+        public void presentarEventosSismicosPendientesDeRevision(System.Collections.Generic.List<object> eventosPreparados)
         {
-            // Asignar directamente la lista de eventos sísmicos al DataGrid
+            // Asignar la lista (objetos anÃ³nimos preparados por el controlador)
             dgEventosSismicos.ItemsSource = null;
             dgEventosSismicos.ItemsSource = eventosPreparados;
 
-            // Configurar las columnas del DataGrid para mostrar las propiedades del objeto EventoSismico
+            // Configurar las columnas del DataGrid para mostrar las propiedades esperadas en los objetos preparados
             dgEventosSismicos.Columns.Clear();
             dgEventosSismicos.Columns.Add(new DataGridTextColumn
             {
                 Header = "FechaHora",
-                Binding = new Binding("FechaHoraOcurrencia")
+                Binding = new Binding("FechaHora")
             });
             dgEventosSismicos.Columns.Add(new DataGridTextColumn
             {
                 Header = "Magnitud",
-                Binding = new Binding("ValorMagnitud")
+                Binding = new Binding("Magnitud")
             });
             dgEventosSismicos.Columns.Add(new DataGridTextColumn
             {
                 Header = "Estado",
-                Binding = new Binding("estadoActual.nombreEstado")
+                Binding = new Binding("Estado")
             });
             dgEventosSismicos.Columns.Add(new DataGridTextColumn
             {
                 Header = "CoordenadasEpicentro",
-                Binding = new Binding("LatitudEpicentro") // Ejemplo: mostrar latitud
+                Binding = new Binding("CoordenadasEpicentro")
             });
             dgEventosSismicos.Columns.Add(new DataGridTextColumn
             {
                 Header = "CoordenadasHipocentro",
-                Binding = new Binding("LatitudHipocentro") // Ejemplo: mostrar latitud
+                Binding = new Binding("CoordenadasHipocentro")
             });
         }
 
         private void dgEventosSismicos_MouseDoubleClick(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
-            if (dgEventosSismicos.SelectedItem is EventoSismico eventoSeleccionado)
+            var selected = dgEventosSismicos.SelectedItem;
+            if (selected == null)
+            {
+                MessageBox.Show("No hay ningÃºn elemento seleccionado.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                return;
+            }
+
+            // Si la vista recibe directamente un EventoSismico
+            if (selected is EventoSismico eventoSeleccionado)
             {
                 gestor.tomarSeleccionEventoSismico(eventoSeleccionado);
+                return;
             }
-            else
+
+            // Si la vista recibiÃ³ objetos anÃ³nimos preparados por el controlador,
+            // estos deben incluir una propiedad 'EventoOriginal' que referencia el EventoSismico real.
+            var prop = selected.GetType().GetProperty("EventoOriginal");
+            if (prop != null)
             {
-                MessageBox.Show("No se pudo obtener el evento seleccionado.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                var original = prop.GetValue(selected) as EventoSismico;
+                if (original != null)
+                {
+                    gestor.tomarSeleccionEventoSismico(original);
+                    return;
+                }
             }
+
+            MessageBox.Show("No se pudo obtener el evento seleccionado.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
         }
 
         public void mostrarDetalleEventoSismico(string alcance, string clasificacion, string origen, double magnitud)
@@ -127,7 +147,7 @@ namespace Vistas
             string origen = txtOrigen.Text.Trim();
             string magnitudStr = txtMagnitud.Text.Trim();
 
-            // Validar campos vacíos
+            // Validar campos vacï¿½os
             if (string.IsNullOrWhiteSpace(alcance) || string.IsNullOrWhiteSpace(origen) || string.IsNullOrWhiteSpace(magnitudStr))
             {
                 MessageBox.Show("Debe completar los campos Alcance, Origen y Magnitud.", "Campos obligatorios", MessageBoxButton.OK, MessageBoxImage.Warning);
@@ -137,12 +157,12 @@ namespace Vistas
             // Validar tipo de magnitud
             if (!double.TryParse(magnitudStr, out double magnitud))
             {
-                MessageBox.Show("El campo Magnitud debe ser un número válido.", "Valor incorrecto", MessageBoxButton.OK, MessageBoxImage.Warning);
+                MessageBox.Show("El campo Magnitud debe ser un nï¿½mero vï¿½lido.", "Valor incorrecto", MessageBoxButton.OK, MessageBoxImage.Warning);
                 return;
             }
 
-            // Aquí puedes usar los valores como necesites, por ejemplo:
-            MessageBox.Show($"Opción: {opcionSeleccionada}\nAlcance: {alcance}\nOrigen: {origen}\nMagnitud: {magnitud}", "Valores seleccionados");
+            // Aquï¿½ puedes usar los valores como necesites, por ejemplo:
+            MessageBox.Show($"Opciï¿½n: {opcionSeleccionada}\nAlcance: {alcance}\nOrigen: {origen}\nMagnitud: {magnitud}", "Valores seleccionados");
 
             gestor.tomarOpcionGrilla(opcionSeleccionada, alcance, origen, magnitud);
         }

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection.Metadata.Ecma335;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -34,6 +35,16 @@ namespace PPAI_REDSISMICA.Entidades
         public List<SerieTemporal> getSeriesTemporales()
         {
             return this.seriesTemporales; // Retorna las series temporales del sismografo
+        }
+
+        public Boolean sosSerieTemporal(SerieTemporal serieTemporalBuscada)
+        {
+            if (this.seriesTemporales.Contains(serieTemporalBuscada)) { 
+                return true; 
+            } 
+            else { 
+                return false; 
+            }
         }
     }
 }

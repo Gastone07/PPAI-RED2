@@ -13,7 +13,7 @@ namespace Controladores
         #region aributos
 
         private readonly pantallaRegistrarResultadoRevisionManual pantalla;
-        // Declarar una variable que contenga un listado de eventos sísmicos
+        // Declarar una variable que contenga un listado de eventos sï¿½smicos
         private List<EventoSismico> eventosSismicos = new List<EventoSismico>();
 
         private List<EventoSismico> eventosPendientes = new List<EventoSismico>();
@@ -50,6 +50,9 @@ namespace Controladores
 
         private Estado estadoSeleccionado = new Estado();
 
+        // diccionario de sismografo y serie temporal
+        private Dictionary<Sismografo, SerieTemporal> diccionarioSismografoSerie = [];
+
         #endregion
         //Paso 1 del Caso de Uso
         public controladorRegistrarResultadoRevisionManual(pantallaRegistrarResultadoRevisionManual pan)
@@ -78,17 +81,20 @@ namespace Controladores
                 }
             }
 
-            // Preparar los datos para la pantalla
+            // Preparar los datos (objetos anÃ³nimos) para la pantalla
+            // Cada objeto contiene las propiedades que la vista necesita y una referencia
+            // al EventoSismico original en la propiedad EventoOriginal.
             var eventosPreparados = eventosPendientes.Select(evento => new
             {
                 FechaHora = evento.FechaHoraOcurrencia,
                 Magnitud = evento.ValorMagnitud,
                 Estado = evento.GetEstadoActual().getNombreEstado(),
-                CoordenadasEpicentro = evento.getCordenadasEpicentro(),
-                CoordenadasHipocentro = evento.getCordenadasHipocentro()
-            }).ToList();
+                CoordenadasEpicentro = string.Join(" - ", evento.getCordenadasEpicentro().Cast<object>()),
+                CoordenadasHipocentro = string.Join(" - ", evento.getCordenadasHipocentro().Cast<object>()),
+                EventoOriginal = evento
+            }).ToList<object>();
 
-            // Pasar los datos preparados a la pantalla
+            // Pasar los datos preparados a la pantalla (la vista mostrarÃ¡ las propiedades del objeto anÃ³nimo)
             pantalla.presentarEventosSismicosPendientesDeRevision(eventosPreparados);
         }
 
@@ -133,12 +139,16 @@ namespace Controladores
         {
             foreach (var sesion in listadoSesiones)
             {
-                if (sesion.fechaHoraFin == null)
+                if (sesion.esSesionActiva()) // Usar el mÃ©todo de la entidad
                 {
-                    return sesion.obtenerUsuarioLogeado(); // Retorna el usuario encontrado
+                    var usuario = sesion.obtenerUsuarioLogeado();
+                    if (usuario != null) 
+                        return usuario;
                 }
             }
-            return null; // Si no se encuentra un usuario logueado
+            
+            // Si no se encuentra un usuario logueado, retornar un Usuario vacÃ­o
+            return new Usuario();
         }
 
         // paso 8 del caso de uso seria nuestro revisar()
@@ -174,6 +184,7 @@ namespace Controladores
             muestrasVisitadas.Clear();
             detallesVisitados.Clear();
             tipoDatoPorDetalle.Clear();
+            diccionarioSismografoSerie.Clear();
 
             //Obtengo las series Temporales
             seriesVisitadas = eventoSeleccionado.buscarSeriesTemporal();
@@ -189,9 +200,7 @@ namespace Controladores
                     {
                         if (serieSismografo.Equals(serie)) // Compara la serie temporal del sismografo con la serie temporal del evento sismico
                         {
-                            // Si son iguales, se puede obtener el nombre de la estación del sismógrafo
-                            nombreEstacion = sismografo.getNombreEstacion(); // Obtiene el nombre de la estación del sismógrafo                           
-                            break; // Salir del bucle una vez encontrado
+                            diccionarioSismografoSerie.Add(sismografo, serie);
                         }
                     }
                 }
@@ -227,7 +236,7 @@ namespace Controladores
                 cambioEstadoNuevo = eventoSelec.crearCambioEstado(estadoSeleccionado, fechaHoraActual);
                 listadoCambiosEstado.Add(cambioEstadoNuevo);
             }
-            else if (opcionCombo == "Solicitar revisión a experto")
+            else if (opcionCombo == "Solicitar revisiï¿½n a experto")
             {
                 estadoSeleccionado = Estado.esRevisadoExperto(listadoEstado);
                 cambioEstadoAbierto = eventoSelec.buscarCambioEstadoAbierto(fechaHoraActual);
@@ -237,24 +246,13 @@ namespace Controladores
             }
             else
             {
-                // Manejar caso no válido
-                throw new ArgumentException("Opción no válida");
+                // Manejar caso no vï¿½lido
+                throw new ArgumentException("Opciï¿½n no vï¿½lida");
             }
             buscarAutodetectado();
         }
 
-        public void presentarEventosSismicosPendientesDeRevision(List<object> eventosPreparados)
-        {
-            // Verificar si la pantalla tiene un DataGrid llamado dgEventosSismicos
-            if (pantalla.dgEventosSismicos != null)
-            {
-                pantalla.dgEventosSismicos.ItemsSource = null;
-                pantalla.dgEventosSismicos.ItemsSource = eventosPreparados;
-            }
-            else
-            {
-                throw new InvalidOperationException("El DataGrid 'dgEventosSismicos' no está inicializado en la pantalla.");
-            }
-        }
+        // La presentaciÃ³n de eventos la realiza la vista (pantalla). El controlador prepara los objetos
+        // y llama a pantalla.presentarEventosSismicosPendientesDeRevision(...)
     }
 }
