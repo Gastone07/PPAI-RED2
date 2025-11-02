@@ -1,6 +1,7 @@
 using PPAI_REDSISMICA.Entidades;
 using PPAI_REDSISMICA.Persistencia;
 using System.Collections.Generic;
+using System.Linq;
 using System.Security.Cryptography.X509Certificates;
 using System.Windows.Documents;
 using Vistas;
@@ -66,8 +67,8 @@ namespace Controladores
 
         public void buscarAutodetectado()
         {
-            // Filtrar los eventos que son NoRevisados directamente en el controlador
-            eventosPendientes.Clear(); // Limpiar la lista de eventos pendientes antes de agregar nuevos
+            // Limpiar la lista de eventos pendientes antes de agregar nuevos
+            eventosPendientes.Clear();
 
             foreach (var evento in eventosSismicos)
             {
@@ -77,8 +78,18 @@ namespace Controladores
                 }
             }
 
-            // Pasar la lista de eventos sísmicos a la pantalla
-            pantalla.presentarEventosSismicosPendientesDeRevision(eventosPendientes);
+            // Preparar los datos para la pantalla
+            var eventosPreparados = eventosPendientes.Select(evento => new
+            {
+                FechaHora = evento.FechaHoraOcurrencia,
+                Magnitud = evento.ValorMagnitud,
+                Estado = evento.GetEstadoActual().getNombreEstado(),
+                CoordenadasEpicentro = evento.getCordenadasEpicentro(),
+                CoordenadasHipocentro = evento.getCordenadasHipocentro()
+            }).ToList();
+
+            // Pasar los datos preparados a la pantalla
+            pantalla.presentarEventosSismicosPendientesDeRevision(eventosPreparados);
         }
 
         public void tomarSeleccionEventoSismico(EventoSismico eventoSeleccionado)
@@ -231,7 +242,19 @@ namespace Controladores
             }
             buscarAutodetectado();
         }
-        
+
+        public void presentarEventosSismicosPendientesDeRevision(List<object> eventosPreparados)
+        {
+            // Verificar si la pantalla tiene un DataGrid llamado dgEventosSismicos
+            if (pantalla.dgEventosSismicos != null)
+            {
+                pantalla.dgEventosSismicos.ItemsSource = null;
+                pantalla.dgEventosSismicos.ItemsSource = eventosPreparados;
+            }
+            else
+            {
+                throw new InvalidOperationException("El DataGrid 'dgEventosSismicos' no está inicializado en la pantalla.");
+            }
+        }
     }
-    
 }

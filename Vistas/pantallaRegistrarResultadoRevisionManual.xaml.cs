@@ -3,7 +3,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media.Imaging;
 using System.Linq;
-using PPAI_REDSISMICA.DTO;
+using System.Windows.Data;
 
 namespace Vistas
 {
@@ -42,19 +42,50 @@ namespace Vistas
             this.Close();
         }
 
-        public void presentarEventosSismicosPendientesDeRevision(List<EventoSismico> eventosSismicos)
+        public void presentarEventosSismicosPendientesDeRevision(List<EventoSismico> eventosPreparados)
         {
-            //MessageBox.Show($"Cantidad de eventos: {eventosSismicos.Count}");
+            // Asignar directamente la lista de eventos sísmicos al DataGrid
             dgEventosSismicos.ItemsSource = null;
-            var listaDTO = eventosSismicos.Select(e => new EventoSismicoDTO(e)).ToList();
-            dgEventosSismicos.ItemsSource = listaDTO;
+            dgEventosSismicos.ItemsSource = eventosPreparados;
+
+            // Configurar las columnas del DataGrid para mostrar las propiedades del objeto EventoSismico
+            dgEventosSismicos.Columns.Clear();
+            dgEventosSismicos.Columns.Add(new DataGridTextColumn
+            {
+                Header = "FechaHora",
+                Binding = new Binding("FechaHoraOcurrencia")
+            });
+            dgEventosSismicos.Columns.Add(new DataGridTextColumn
+            {
+                Header = "Magnitud",
+                Binding = new Binding("ValorMagnitud")
+            });
+            dgEventosSismicos.Columns.Add(new DataGridTextColumn
+            {
+                Header = "Estado",
+                Binding = new Binding("estadoActual.nombreEstado")
+            });
+            dgEventosSismicos.Columns.Add(new DataGridTextColumn
+            {
+                Header = "CoordenadasEpicentro",
+                Binding = new Binding("LatitudEpicentro") // Ejemplo: mostrar latitud
+            });
+            dgEventosSismicos.Columns.Add(new DataGridTextColumn
+            {
+                Header = "CoordenadasHipocentro",
+                Binding = new Binding("LatitudHipocentro") // Ejemplo: mostrar latitud
+            });
         }
 
         private void dgEventosSismicos_MouseDoubleClick(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
-            if (dgEventosSismicos.SelectedItem is EventoSismicoDTO dto && dto.EventoOriginal != null)
+            if (dgEventosSismicos.SelectedItem is EventoSismico eventoSeleccionado)
             {
-                gestor.tomarSeleccionEventoSismico(dto.EventoOriginal);
+                gestor.tomarSeleccionEventoSismico(eventoSeleccionado);
+            }
+            else
+            {
+                MessageBox.Show("No se pudo obtener el evento seleccionado.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
 
