@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using static PPAI_REDSISMICA.Persistencia.Persistencia;
 
 namespace PPAI_REDSISMICA.Entidades
 {
@@ -19,6 +21,30 @@ namespace PPAI_REDSISMICA.Entidades
             this.denominacion = denominacion;
             this.nombreUnidadMedida = nombreUnidadMedida;
             this.valorUmbral = valorUmbral;
+        }
+
+        public TipoDeDato(DataRow data)
+        {
+            this.denominacion = Convert.ToString(data["denominacion"]) ?? string.Empty;
+            this.nombreUnidadMedida = Convert.ToString(data["nombreUnidadMedida"]) ?? string.Empty;
+            this.valorUmbral = Convert.ToDouble(data["valorUmbral"]);
+        }
+
+        public static TipoDeDato buscarTipoDatoXID(int id)
+        {
+            GeneralAdapterSQL generalAdapterSQL = new GeneralAdapterSQL();
+            DataTable respuesta = generalAdapterSQL.EjecutarVista("TiposDato WHERE idTipo = " + id);
+
+            if (respuesta != null && respuesta.Rows.Count > 0 && respuesta.Rows[0][0].ToString() != "ERROR")
+            {
+                TipoDeDato tipo = new TipoDeDato(respuesta.Rows[0]);
+                return tipo;
+            }
+            else
+            {
+                return new TipoDeDato("", "", -1); // Retorna un TipoDeDato inválido si no se encuentra
+            }
+            
         }
 
         public TipoDeDato getDatos()

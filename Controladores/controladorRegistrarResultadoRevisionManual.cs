@@ -63,7 +63,12 @@ namespace Controladores
         public void registrarResultadoDeRevisionManual()
         {
             // Cargar los datos iniciales y asignarlos a los atributos del controlador
-            (eventosSismicos, listadoEstado, listadoCambiosEstado, listadoSesiones, sismografos) = Persistencia.ObtenerDatos2();
+            //(eventosSismicos, listadoEstado, listadoCambiosEstado, listadoSesiones, sismografos) = Persistencia.ObtenerDatos2();
+            eventosSismicos = EventoSismico.obtenerTodoEventoSismico();
+            listadoEstado = Estado.obtenerEstados();
+            listadoCambiosEstado = CambioEstado.obtenerCambiosEstados();
+            listadoSesiones = Sesion.obtenerSesiones();
+            sismografos = Sismografo.obtenerSismografos();
 
             buscarAutodetectado();
         }
@@ -81,9 +86,6 @@ namespace Controladores
                 }
             }
 
-            // Preparar los datos (objetos anónimos) para la pantalla
-            // Cada objeto contiene las propiedades que la vista necesita y una referencia
-            // al EventoSismico original en la propiedad EventoOriginal.
             var eventosPreparados = eventosPendientes.Select(evento => new
             {
                 FechaHora = evento.FechaHoraOcurrencia,

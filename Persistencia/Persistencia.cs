@@ -1,8 +1,9 @@
-﻿using PPAI_REDSISMICA.Entidades;
+﻿using Microsoft.Data.SqlClient;
+using Microsoft.Extensions.Logging;
+using PPAI_REDSISMICA.Entidades;
 using System;
 using System.Collections.Generic;
 using System.Data;
-using Microsoft.Data.SqlClient;
 using System.Linq;
 
 namespace PPAI_REDSISMICA.Persistencia
@@ -256,21 +257,7 @@ namespace PPAI_REDSISMICA.Persistencia
 
         public static (List<EventoSismico>, List<Estado>, List<CambioEstado>, List<Sesion>, List<Sismografo>) ObtenerDatos2()
         {
-            GeneralAdapterSQL generalAdapterSQL = new GeneralAdapterSQL();
-            DataTable respuesta =  generalAdapterSQL.EjecutarVista("EventoSismico");
-            if (respuesta != null && respuesta.Rows.Count > 0 && respuesta.Rows[0]["RESULTADO"].ToString() == "ERROR")
-            {
-                List<EventoSismico> listaEventos = new List<EventoSismico>();
-                
-                //Hubo un error al consultar la base de datos
-                foreach (DataRow item  in respuesta.Rows)
-                {
-                    listaEventos.Add(new EventoSismico(item));
-                }
-
-                return (new List<EventoSismico>(), new List<Estado>(), new List<CambioEstado>(), new List<Sesion>(), new List<Sismografo>());
-            }
-
+       
             return (new List<EventoSismico>(), new List<Estado>(), new List<CambioEstado>(), new List<Sesion>(), new List<Sismografo>());
         }
 
@@ -342,12 +329,45 @@ namespace PPAI_REDSISMICA.Persistencia
             }
             return respuesta;
         }
-        /// <summary>
-        /// Es un esquema de conversion de tipo de variables C# a tipo de variables SQL
-        /// </summary>
-        /// <param name="variable">La variable que usamos de parametro</param>
-        /// <returns>Un tipo de base de datos SQL para ejecutar el procedimiento</returns>
-        private static SqlDbType GetDBType(object variable)
+        public DataTable EjecutarQuery(string consulta)
+            {
+                ObtenerCadenaConexion();
+                //Es necesario ponerlo por fuera para poder usar el bloque finally
+                using SqlConnection conexionBase = new(CadenaConexion);
+                DataTable respuesta = new();
+                try
+                {
+                    //Con esto recupera la informacion de la vista
+                    
+                    using var comando = new SqlCommand(consulta, conexionBase);//Creamos el comando en la base con la conexion
+                    comando.CommandType = CommandType.Text;//Notificamos a la base que vamos a enviar
+                    SqlDataAdapter Adaptador = new(comando);
+                    conexionBase.Open(); //Abre la conexion (Puede fallar)
+                    Adaptador.Fill(respuesta); //Contacta la base y ejecuta el comando
+                }
+                catch (Exception ex)
+                {                  
+                    //Esta parte es para devolver un codigo de error al endpoint
+                    respuesta.Columns.Add("RESULTADO");
+                    respuesta.Rows.Add("ERROR");
+                }
+                //Lo va a ejecutar no importa que parte del codigo realice
+                finally
+                {
+                    //Limpia cualquier cadena de conexion que tengamos
+                    SqlConnection.ClearAllPools();
+                    //Cierra la base de datos siempre
+                    conexionBase.Close();
+                }
+                return respuesta;
+            }
+
+            /// <summary>
+            /// Es un esquema de conversion de tipo de variables C# a tipo de variables SQL
+            /// </summary>
+            /// <param name="variable">La variable que usamos de parametro</param>
+            /// <returns>Un tipo de base de datos SQL para ejecutar el procedimiento</returns>
+            private static SqlDbType GetDBType(object variable)
         {
             string name = variable.GetType().Name;
             switch (variable.GetType().Name)

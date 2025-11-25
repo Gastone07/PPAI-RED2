@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using static PPAI_REDSISMICA.Persistencia.Persistencia;
 
 namespace PPAI_REDSISMICA.Entidades
 {
@@ -20,6 +22,45 @@ namespace PPAI_REDSISMICA.Entidades
         public Estado()
         {
             // Constructor por defecto
+        }
+
+        public Estado(DataRow data)
+        {
+            this.ambito = Convert.ToString(data["ambito"]) ?? string.Empty;
+            this.nombreEstado = Convert.ToString(data["nombreEstado"]) ?? string.Empty;
+        }
+
+        public static List<Estado> obtenerEstados()
+        {
+            GeneralAdapterSQL generalAdapterSQL = new GeneralAdapterSQL();
+            DataTable respuesta = generalAdapterSQL.EjecutarVista("Estados");
+            List<Estado> listaEstados = new List<Estado>();
+
+            if (respuesta != null && respuesta.Rows.Count > 0 && respuesta.Rows[0][0].ToString() != "ERROR")
+            {
+
+                //Hubo un error al consultar la base de datos
+                foreach (DataRow item in respuesta.Rows)
+                {
+                    listaEstados.Add(new Estado(item));
+                }
+
+            }
+            return listaEstados;
+        }
+
+        public static Estado recuperarEstadoXID(int id)
+        {
+            GeneralAdapterSQL generalAdapterSQL = new GeneralAdapterSQL();
+            DataTable respuesta = generalAdapterSQL.EjecutarVista("Estados WHERE idEstado = " + id);
+            Estado estado = new Estado();
+            if (respuesta != null && respuesta.Rows.Count > 0 && respuesta.Rows[0][0].ToString() != "ERROR")
+            { 
+              estado = new (respuesta.Rows[0]);
+                
+            }
+            return estado;
+
         }
 
         public static Estado esRechazado(List<Estado> estados)
