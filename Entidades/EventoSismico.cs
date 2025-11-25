@@ -66,11 +66,11 @@ public class EventoSismico
         LatitudHipocentro = Convert.ToDouble(data["latitudHipocentro"]);
         LongitudHipocentro = Convert.ToDouble(data["longitudHipocentro"]);
         ValorMagnitud = Convert.ToDouble(data["valorMagnitud"]);
-        estadoActual = Estado.recuperarEstadoXID((int)data["idEstadoActual"]);
-        seriesTemporales = SerieTemporal.recuperarSeriesTemporalesPorEventoSismico((int)data["idEventoSismico"]);
-        alcance = AlcanceSismo.recuperarAlcanceSismoXID((int)data["idAlcance"]);
-        origenDeGeneracion = OrigenDeGeneracion.recuperarOrigenDeGeneracionXID((int)data["idOrigenDeGeneracion"]);
-        clasificacion = ClasificacionSismo.recuperarClasificacionSismoXID((int)data["idClasificacion"]);
+        //estadoActual = Estado.recuperarEstadoXID((int)data["idEstado"]);
+        //seriesTemporales = SerieTemporal.recuperarSeriesTemporalesPorEventoSismico((int)data["idEventoSismico"]);
+        //alcance = AlcanceSismo.recuperarAlcanceSismoXID((int)data["idSismo"]);
+        //origenDeGeneracion = OrigenDeGeneracion.recuperarOrigenDeGeneracionXID((int)data["idEventoSismico"]);
+        //clasificacion = ClasificacionSismo.recuperarClasificacionSismoXID((int)data["idEventoSismico"]);
 
     }
 
