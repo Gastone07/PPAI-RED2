@@ -63,7 +63,7 @@ namespace Controladores
         public void registrarResultadoDeRevisionManual()
         {
             // Cargar los datos iniciales y asignarlos a los atributos del controlador
-            (eventosSismicos, listadoEstado, listadoCambiosEstado, listadoSesiones, sismografos) = Persistencia.ObtenerDatos();
+            (eventosSismicos, listadoEstado, listadoCambiosEstado, listadoSesiones, sismografos) = Persistencia.ObtenerDatos2();
 
             buscarAutodetectado();
         }
@@ -144,7 +144,7 @@ namespace Controladores
                     var usuario = sesion.obtenerUsuarioLogeado();
                     if (usuario != null) 
                         return usuario;
-                }
+                }       
             }
             
             // Si no se encuentra un usuario logueado, retornar un Usuario vacío
@@ -154,8 +154,9 @@ namespace Controladores
         // paso 8 del caso de uso seria nuestro revisar()
         private void actualizarCambioEstado(EventoSismico eventoSeleccionado)
         {
-            //cambio estado del evento para bloquearlo PASO 8 del caso de uso
-            cambioEstadoAbierto = eventoSeleccionado.buscarCambioEstadoAbierto(fechaHoraActual);
+
+            //cambioEstadoAbierto = eventoSeleccionado.buscarCambioEstadoAbierto(fechaHoraActual);
+            //cambioEstadoAbierto = eventoSeleccionado.actualizarCambioEstado();
 
             cambioEstadoNuevo = eventoSeleccionado.crearCambioEstado(estadoBloqueado, fechaHoraActual);
             

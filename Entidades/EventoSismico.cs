@@ -1,6 +1,9 @@
 using PPAI_REDSISMICA.Entidades;
 using System;
 using System.Collections.Generic;
+using System.Data;
+using System.Security.RightsManagement;
+using static PPAI_REDSISMICA.Persistencia.Persistencia;
 
 public class EventoSismico
 {
@@ -50,8 +53,55 @@ public class EventoSismico
         this.clasificacion = clasificacionSismo;
     }
 
-    public EventoSismico()
+    public EventoSismico(DataRow data)
     {
+        FechaHoraOcurrencia = Convert.ToDateTime(data["fecha_hora_ocurrencia"]);
+        FechaHoraFin = Convert.ToDateTime(data["fecha_hora_fin"]);
+        LatitudEpicentro = Convert.ToDouble(data["latitud_epicentro"]);
+        LongitudEpicentro = Convert.ToDouble(data["longitud_epicentro"]);
+        LatitudHipocentro = Convert.ToDouble(data["latitud_hipocentro"]);
+        LongitudHipocentro = Convert.ToDouble(data["longitud_hipocentro"]);
+        ValorMagnitud = Convert.ToDouble(data["valor_magnitud"]);
+    }
+
+    public static List<CambioEstado> recuperarCambiosEstados(int id)
+    {
+        GeneralAdapterSQL generalAdapterSQL = new GeneralAdapterSQL();
+        DataTable respuesta = generalAdapterSQL.EjecutarVista("CambioEstado WHERE "+ , id);
+        List<CambioEstado> listaCambiosEstados = new List<CambioEstado>();
+        if (respuesta != null && respuesta.Rows.Count > 0 && respuesta.Rows[0]["RESULTADO"].ToString() != "ERROR")
+        {
+            foreach (DataRow item in respuesta.Rows)
+            {
+                // Crear instancia de CambioEstado a partir de DataRow
+                CambioEstado cambioEstado = new CambioEstado(
+                    Convert.ToDateTime(item["fecha_hora_inicio"]),
+                    item["fecha_hora_fin"] != DBNull.Value ? (DateTime?)Convert.ToDateTime(item["fecha_hora_fin"]) : null,
+                    new Estado(item["ambito"].ToString(), item["nombre_estado"].ToString())
+                );
+                listaCambiosEstados.Add(cambioEstado);
+            }
+        }
+        return listaCambiosEstados;
+    }
+
+    public static List<EventoSismico> obtenerTodoEventoSismico()
+    {
+        GeneralAdapterSQL generalAdapterSQL = new GeneralAdapterSQL();
+        DataTable respuesta = generalAdapterSQL.EjecutarVista("EventoSismico");
+        List<EventoSismico> listaEventos = new List<EventoSismico>();
+
+        if (respuesta != null && respuesta.Rows.Count > 0 && respuesta.Rows[0]["RESULTADO"].ToString() == "ERROR")
+        {
+            
+            //Hubo un error al consultar la base de datos
+            foreach (DataRow item in respuesta.Rows)
+            {
+                listaEventos.Add(new EventoSismico(item));
+            }
+ 
+        }
+        return listaEventos;
     }
 
     public bool esPendienteDeRevision()
@@ -68,6 +118,11 @@ public class EventoSismico
     public CambioEstado buscarCambioEstadoAbierto(DateTime fechaHoraActual)
     {
         return this.CambioEstado.sosActual(fechaHoraActual);// busco el cambio de estado abierto del evento sismico
+    }
+
+    public  void actualizarCambioEstado(DateTime fechaHoraActual)
+    {
+       // this.estadoActual.cambiarEstadoEventoSismico(fechaHoraActual);
     }
 
     public CambioEstado crearCambioEstado(Estado estado, DateTime fechaHoraInicio)
