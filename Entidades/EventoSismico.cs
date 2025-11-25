@@ -66,6 +66,12 @@ public class EventoSismico
         LatitudHipocentro = Convert.ToDouble(data["latitudHipocentro"]);
         LongitudHipocentro = Convert.ToDouble(data["longitudHipocentro"]);
         ValorMagnitud = Convert.ToDouble(data["valorMagnitud"]);
+        estadoActual = Estado.recuperarEstadoXID((int)data["idEstadoActual"]);
+        seriesTemporales = SerieTemporal.recuperarSeriesTemporalesPorEventoSismico((int)data["idEventoSismico"]);
+        alcance = AlcanceSismo.recuperarAlcanceSismoXID((int)data["idAlcance"]);
+        origenDeGeneracion = OrigenDeGeneracion.recuperarOrigenDeGeneracionXID((int)data["idOrigenDeGeneracion"]);
+        clasificacion = ClasificacionSismo.recuperarClasificacionSismoXID((int)data["idClasificacion"]);
+
     }
 
     public static List<CambioEstado> recuperarCambiosEstados(int id)
