@@ -124,6 +124,7 @@ namespace Controladores
             return DateTime.Now;
         }
 
+        //cambiarlo
         public void buscarEstadoBloqueado()
         {
             foreach (Estado estado in listadoEstado)
@@ -157,8 +158,9 @@ namespace Controladores
         private void actualizarCambioEstado(EventoSismico eventoSeleccionado)
         {
 
-            //cambioEstadoAbierto = eventoSeleccionado.buscarCambioEstadoAbierto(fechaHoraActual);
-            //cambioEstadoAbierto = eventoSeleccionado.actualizarCambioEstado();
+            cambioEstadoAbierto = eventoSeleccionado.buscarCambioEstadoAbierto();
+
+            eventoSeleccionado.actualizarCambioEstado(fechaHoraActual, cambioEstadoAbierto);
 
             cambioEstadoNuevo = eventoSeleccionado.crearCambioEstado(estadoBloqueado, fechaHoraActual);
             

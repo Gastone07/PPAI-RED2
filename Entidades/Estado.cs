@@ -8,7 +8,7 @@ using static PPAI_REDSISMICA.Persistencia.Persistencia;
 
 namespace PPAI_REDSISMICA.Entidades
 {
-    public class Estado
+    public abstract class Estado
     {
         public string ambito { get; set; }
         public string nombreEstado { get; set; }
@@ -24,90 +24,14 @@ namespace PPAI_REDSISMICA.Entidades
             // Constructor por defecto
         }
 
-        public Estado(DataRow data)
-        {
-            this.ambito = Convert.ToString(data["ambito"]) ?? string.Empty;
-            this.nombreEstado = Convert.ToString(data["nombreEstado"]) ?? string.Empty;
-        }
+        public abstract bool esAutoDetectado();
+        public abstract bool esBloqueadoEnRevision();
+        public abstract bool esPendienteParaRevision();
+        public abstract bool esPendienteRevisionExperto();
+        public abstract bool esRechazado();
+        public abstract bool esConfirmado();
 
-        public static List<Estado> obtenerEstados()
-        {
-            GeneralAdapterSQL generalAdapterSQL = new GeneralAdapterSQL();
-            DataTable respuesta = generalAdapterSQL.EjecutarVista("Estados");
-            List<Estado> listaEstados = new List<Estado>();
-
-            if (respuesta != null && respuesta.Rows.Count > 0 && respuesta.Rows[0][0].ToString() != "ERROR")
-            {
-
-                //Hubo un error al consultar la base de datos
-                foreach (DataRow item in respuesta.Rows)
-                {
-                    listaEstados.Add(new Estado(item));
-                }
-
-            }
-            return listaEstados;
-        }
-
-        public static Estado recuperarEstadoXID(int id)
-        {
-            GeneralAdapterSQL generalAdapterSQL = new GeneralAdapterSQL();
-            DataTable respuesta = generalAdapterSQL.EjecutarVista("Estados WHERE idEstado = " + id);
-            Estado estado = new Estado();
-            if (respuesta != null && respuesta.Rows.Count > 0 && respuesta.Rows[0][0].ToString() != "ERROR")
-            { 
-              estado = new (respuesta.Rows[0]);
-                
-            }
-            return estado;
-
-        }
-
-        public static Estado esRechazado(List<Estado> estados)
-        {
-            foreach (var estado in estados)
-            {
-                if (estado.esAmbitoEvento())
-                {
-                    if (estado.esEstadoRechazado())
-                    {
-                        return estado; // Retorna el estado bloqueado encontrado
-                    }
-                }
-            }
-            return new Estado(); // Si no se encuentra el estado bloqueado
-        }
-
-        public static Estado esConfirmado(List<Estado> estados)
-        {
-            foreach (var estado in estados)
-            {
-                if (estado.esAmbitoEvento())
-                {
-                    if (estado.esEstadoConfirmado())
-                    {
-                        return estado; // Retorna el estado bloqueado encontrado
-                    }
-                }
-            }
-            return new Estado(); // Si no se encuentra el estado bloqueado
-        }
-
-        public static Estado esRevisadoExperto(List<Estado> estados)
-        {
-            foreach (var estado in estados)
-            {
-                if (estado.esAmbitoEvento())
-                {
-                    if (estado.esEstadoRevisadoPorExperto())
-                    {
-                        return estado; // Retorna el estado bloqueado encontrado
-                    }
-                }
-            }
-            return new Estado(); // Si no se encuentra el estado bloqueado
-        }
-
+        public abstract void cambiarEstadoEventoSismico(DateTime fechaHora, CambioEstado cambio, EventoSismico idEvento);
         public bool esAmbitoEvento()
         {
             if (this.ambito == "evento")
@@ -184,6 +108,9 @@ namespace PPAI_REDSISMICA.Entidades
                 return false; // El estado no es pendiente de revision
             }
         }
+
+        
     }
 }
+
 

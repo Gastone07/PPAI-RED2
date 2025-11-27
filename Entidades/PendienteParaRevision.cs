@@ -1,4 +1,5 @@
-﻿using System;
+﻿using PPAI_REDSISMICA.ModeloPersistencia;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -11,8 +12,15 @@ namespace PPAI_REDSISMICA.Entidades
         private string ambito { get; set; }
         private string nombreEstado { get; set; }
 
+        private int idEstado = 6;
         private CambioEstado cambioEstado { get; set; }
 
+
+        public PendienteParaRevision(string ambito, string nombreEstado)
+        {
+            this.ambito = ambito;
+            this.nombreEstado = nombreEstado;
+        }
 
         public string getAmbito()
         {
@@ -44,9 +52,35 @@ namespace PPAI_REDSISMICA.Entidades
             cambioEstado.sosActual(fechaHoraActual);
         }
 
-        public BloqueadoEnRevision crearEstadoBloqueadoEnRevision()
+
+        public override bool esAutoDetectado(){  return false; }
+        public override bool esBloqueadoEnRevision() { return false; }
+        public override bool esPendienteRevisionExperto() { return false; }
+        public override bool esRechazado() { return false; }
+        public override bool esConfirmado() { return false; }
+        public override bool esPendienteParaRevision(){ return true; }
+
+        public BloqueadoEnRevision crearEstadoBloqueadoParaRevision()
         {
-            return new BloqueadoEnRevision("Evento Sismico", "BloqueadoParaRevision");
+            return new(ambito, "BloqueadoParaRevision");
+        }
+
+        public CambioEstado crearNuevoCambioEstado(Estado estado)
+        {
+            return new CambioEstado(DateTime.Now, null, estado);
+        }
+
+        public override void cambiarEstadoEventoSismico(DateTime fechaHora, CambioEstado cambio, EventoSismico evento)
+        {
+            cambio.setFechaHoraFin(fechaHora);
+            CambioEstadoPersistencia.setHoraFin(fechaHora, cambio.getId());
+            BloqueadoEnRevision bloqueado = crearEstadoBloqueadoParaRevision();
+            CambioEstado actual = crearNuevoCambioEstado(bloqueado);
+
+            CambioEstadoPersistencia.insertarCambioEstado(idEstado, fechaHora, evento.getId());
+            evento.setEstado(bloqueado);
+            evento.agregarCambioEstado(actual);
+            
         }
 
         public CambioEstado crearNuevoCambioEstado(DateTime fechaHoraActual, BloqueadoEnRevision estado)
@@ -54,5 +88,7 @@ namespace PPAI_REDSISMICA.Entidades
             return new CambioEstado(fechaHoraActual, null, estado);
             
         }
+
+       
     }
 }

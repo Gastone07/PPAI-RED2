@@ -14,8 +14,10 @@ public class EventoSismico
     public double LongitudEpicentro { get; set; }
     public double LongitudHipocentro { get; set; }
     public double ValorMagnitud { get; set; }
-    private CambioEstado CambioEstado { get; set; }
+    private List<CambioEstado> CambioEstado { get; set; }
     private Estado estadoActual { get; set; }
+
+    private int idEvento = 0;
 
     private OrigenDeGeneracion origenDeGeneracion { get; set; }
     private AlcanceSismo alcance { get; set; }
@@ -31,7 +33,7 @@ public class EventoSismico
         double latitudHipocentro,
         double longitudHipocentro,
         double valorMagnitud,
-        CambioEstado cambioEstado,
+        List<CambioEstado> cambioEstado,
         Estado estadoActual,
         List<SerieTemporal> seriesTemporales,
         AlcanceSismo alcanceSismo,
@@ -57,21 +59,22 @@ public class EventoSismico
     { 
     }
 
-    public EventoSismico(DataRow data)
+    public EventoSismico(DateTime fechaHoraFin, DateTime fechaHoraOcurrencia, double latitudEpicentro, double latitudHipocentro, double longitudEpicentro, double longitudHipocentro, double valorMagnitud, List<CambioEstado> cambioEstado, Estado estadoActual, int idEvento, OrigenDeGeneracion origenDeGeneracion, AlcanceSismo alcance, ClasificacionSismo clasificacion, List<SerieTemporal>? seriesTemporales)
     {
-        FechaHoraOcurrencia = Convert.ToDateTime(data["fechaHoraOcurrencia"]);
-        FechaHoraFin = Convert.ToDateTime(data["fechaHoraFin"]);
-        LatitudEpicentro = Convert.ToDouble(data["latitudEpicentro"]);
-        LongitudEpicentro = Convert.ToDouble(data["longitudEpicentro"]);
-        LatitudHipocentro = Convert.ToDouble(data["latitudHipocentro"]);
-        LongitudHipocentro = Convert.ToDouble(data["longitudHipocentro"]);
-        ValorMagnitud = Convert.ToDouble(data["valorMagnitud"]);
-        //estadoActual = Estado.recuperarEstadoXID((int)data["idEstado"]);
-        //seriesTemporales = SerieTemporal.recuperarSeriesTemporalesPorEventoSismico((int)data["idEventoSismico"]);
-        //alcance = AlcanceSismo.recuperarAlcanceSismoXID((int)data["idSismo"]);
-        //origenDeGeneracion = OrigenDeGeneracion.recuperarOrigenDeGeneracionXID((int)data["idEventoSismico"]);
-        //clasificacion = ClasificacionSismo.recuperarClasificacionSismoXID((int)data["idEventoSismico"]);
-
+        FechaHoraFin = fechaHoraFin;
+        FechaHoraOcurrencia = fechaHoraOcurrencia;
+        LatitudEpicentro = latitudEpicentro;
+        LatitudHipocentro = latitudHipocentro;
+        LongitudEpicentro = longitudEpicentro;
+        LongitudHipocentro = longitudHipocentro;
+        ValorMagnitud = valorMagnitud;
+        CambioEstado = cambioEstado;
+        this.estadoActual = estadoActual;
+        this.idEvento = idEvento;
+        this.origenDeGeneracion = origenDeGeneracion;
+        this.alcance = alcance;
+        this.clasificacion = clasificacion;
+        this.seriesTemporales = seriesTemporales;
     }
 
     public static List<CambioEstado> recuperarCambiosEstados(int id)
@@ -119,14 +122,18 @@ public class EventoSismico
     }
 
 
-    public CambioEstado buscarCambioEstadoAbierto(DateTime fechaHoraActual)
+    public CambioEstado buscarCambioEstadoAbierto()
     {
-        return this.CambioEstado.sosActual(fechaHoraActual);// busco el cambio de estado abierto del evento sismico
+        foreach (var cambio in CambioEstado)
+        {
+            if (cambio.sosActual()) return cambio;
+        }
+        return new();// busco el cambio de estado abierto del evento sismico
     }
 
     public  void actualizarCambioEstado(DateTime fechaHoraActual)
     {
-       // this.estadoActual.cambiarEstadoEventoSismico(fechaHoraActual);
+       this.estadoActual.cambiarEstadoEventoSismico(fechaHoraActual, this.buscarCambioEstadoAbierto(), this.id);
     }
 
     public CambioEstado crearCambioEstado(Estado estado, DateTime fechaHoraInicio)
@@ -208,6 +215,17 @@ public class EventoSismico
     {
         return seriesTemporales; // Retorna la lista de series temporales asociadas al evento sismico
     }
+
+    public int getId()
+    {
+        return idEvento;
+    }
+
+    public void agregarCambioEstado(CambioEstado cambio)
+    {
+        CambioEstado.Add(cambio);
+    }
 }
+
 
 

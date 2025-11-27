@@ -24,30 +24,12 @@ namespace PPAI_REDSISMICA.Entidades
 
         }
 
-        public AlcanceSismo(DataRow data)
-        {
-            this.nombre = Convert.ToString(data["nombre"]) ?? string.Empty;
-            this.descripcion = Convert.ToString(data["descripcion"]) ?? string.Empty;
-        }
-
         public string getNombre()
         {
             return nombre;
         }
 
-        public static AlcanceSismo recuperarAlcanceSismoXID(int id)
-        {
-            GeneralAdapterSQL generalAdapterSQL = new GeneralAdapterSQL();
-            DataTable respuesta = generalAdapterSQL.EjecutarVista("Alcance WHERE idSismo = " + id);
-            AlcanceSismo alcance = new AlcanceSismo();
-            if (respuesta != null && respuesta.Rows.Count > 0 && respuesta.Rows[0][0].ToString() != "ERROR")
-            {
-                alcance = new(respuesta.Rows[0]);
-
-            }
-            return alcance;
-
-        }
+        
 
 
 
