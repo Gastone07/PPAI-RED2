@@ -14,7 +14,6 @@ namespace PPAI_REDSISMICA.Entidades
         private int kmProfundidadHasta;
         private string nombre;
 
-
         public ClasificacionSismo(int kmProfundidadDesde, int kmProfundidadHasta, string nombre)
         {
             this.kmProfundidadDesde = kmProfundidadDesde;
@@ -30,24 +29,6 @@ namespace PPAI_REDSISMICA.Entidades
         public ClasificacionSismo()
         { 
         }
-        public ClasificacionSismo(DataRow data)
-        {
-            this.kmProfundidadDesde = Convert.ToInt32(data["kmProfundidadDesde"]);
-            this.kmProfundidadHasta = Convert.ToInt32(data["kmProfundidadHasta"]);
-            this.nombre = Convert.ToString(data["nombre"]) ?? string.Empty;
-        }
-        public static ClasificacionSismo recuperarClasificacionSismoXID(int id)
-        {
 
-            GeneralAdapterSQL generalAdapterSQL = new GeneralAdapterSQL();
-            DataTable respuesta = generalAdapterSQL.EjecutarVista("Clasificaciones WHERE idEventoSismico = " + id);
-            ClasificacionSismo clasificiacion = new ClasificacionSismo();
-            if (respuesta != null && respuesta.Rows.Count > 0 && respuesta.Rows[0][0].ToString() != "ERROR")
-            {
-                clasificiacion = new(respuesta.Rows[0]);
-
-            }
-            return clasificiacion;
-        }
     }
 }

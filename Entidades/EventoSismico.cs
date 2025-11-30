@@ -26,6 +26,7 @@ public class EventoSismico
     private List<SerieTemporal>? seriesTemporales = new List<SerieTemporal>();
 
     public EventoSismico(
+
         DateTime fechaHoraOcurrencia,
         DateTime fechaHoraFin,
         double latitudEpicentro,
@@ -59,8 +60,9 @@ public class EventoSismico
     { 
     }
 
-    public EventoSismico(DateTime fechaHoraFin, DateTime fechaHoraOcurrencia, double latitudEpicentro, double latitudHipocentro, double longitudEpicentro, double longitudHipocentro, double valorMagnitud, List<CambioEstado> cambioEstado, Estado estadoActual, int idEvento, OrigenDeGeneracion origenDeGeneracion, AlcanceSismo alcance, ClasificacionSismo clasificacion, List<SerieTemporal>? seriesTemporales)
+    public EventoSismico(int idEvent, DateTime fechaHoraFin, DateTime fechaHoraOcurrencia, double latitudEpicentro, double latitudHipocentro, double longitudEpicentro, double longitudHipocentro, double valorMagnitud, List<CambioEstado> cambioEstado, Estado estadoActual, OrigenDeGeneracion origenDeGeneracion, AlcanceSismo alcance, ClasificacionSismo clasificacion, List<SerieTemporal>? seriesTemporales)
     {
+        idEvento = idEvent;
         FechaHoraFin = fechaHoraFin;
         FechaHoraOcurrencia = fechaHoraOcurrencia;
         LatitudEpicentro = latitudEpicentro;
@@ -70,46 +72,12 @@ public class EventoSismico
         ValorMagnitud = valorMagnitud;
         CambioEstado = cambioEstado;
         this.estadoActual = estadoActual;
-        this.idEvento = idEvento;
         this.origenDeGeneracion = origenDeGeneracion;
         this.alcance = alcance;
         this.clasificacion = clasificacion;
         this.seriesTemporales = seriesTemporales;
     }
 
-    public static List<CambioEstado> recuperarCambiosEstados(int id)
-    {
-        GeneralAdapterSQL generalAdapterSQL = new GeneralAdapterSQL();
-        DataTable respuesta = generalAdapterSQL.EjecutarVista("CambioEstado WHERE idEstado = "+ id);
-        List<CambioEstado> listaCambiosEstados = new List<CambioEstado>();
-        if (respuesta != null && respuesta.Rows.Count > 0 && respuesta.Rows[0][0].ToString() != "ERROR")
-        {
-            foreach (DataRow item in respuesta.Rows)
-            {
-                listaCambiosEstados.Add(new(item));
-            }
-        }
-        return listaCambiosEstados;
-    }
-
-    public static List<EventoSismico> obtenerTodoEventoSismico()
-    {
-        GeneralAdapterSQL generalAdapterSQL = new GeneralAdapterSQL();
-        DataTable respuesta = generalAdapterSQL.EjecutarVista("EventosSismico");
-        List<EventoSismico> listaEventos = new List<EventoSismico>();
-
-        if (respuesta != null && respuesta.Rows.Count > 0 && respuesta.Rows[0][0].ToString() != "ERROR")
-        {
-            
-            //Hubo un error al consultar la base de datos
-            foreach (DataRow item in respuesta.Rows)
-            {
-                listaEventos.Add(new EventoSismico(item));
-            }
- 
-        }
-        return listaEventos;
-    }
 
     public bool esPendienteDeRevision()
     {
@@ -139,7 +107,7 @@ public class EventoSismico
     public CambioEstado crearCambioEstado(Estado estado, DateTime fechaHoraInicio)
     {
         //creo el nuevo cambio de estado del evento sismico
-        CambioEstado = new CambioEstado(fechaHoraInicio, null, estado);
+        CambioEstado CambioEstado = new CambioEstado(fechaHoraInicio, null, estado);
 
         this.CambioEstado = CambioEstado; // Actualiza el cambio de estado del evento sismico
 

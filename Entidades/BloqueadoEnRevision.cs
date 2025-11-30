@@ -18,6 +18,11 @@ namespace PPAI_REDSISMICA.Entidades
             this.ambito = ambito;
             this.nombreEstado = nombreEstado;
         }
+
+        public BloqueadoEnRevision()
+        {
+        }
+
         public string getAmbito()
         {
             return ambito;
@@ -51,16 +56,16 @@ namespace PPAI_REDSISMICA.Entidades
         {
             return new CambioEstado(DateTime.Now, null, estado );
         }
-        public override Estado cambiarEstadoEventoSismico(DateTime fechaHora, CambioEstado cambio, int idEvento) 
+        public override void cambiarEstadoEventoSismico(DateTime fechaHora, CambioEstado cambio, EventoSismico evento) 
         {
             cambio.setFechaHoraFin(fechaHora);        
             CambioEstadoPersistencia.setHoraFin(fechaHora, cambio.getId());
             Rechazado rechazado = crearEstadoRechazado();
             CambioEstado actual = crearNuevoCambioEstado(rechazado);
 
-            CambioEstadoPersistencia.insertarCambioEstado(idEstado,fechaHora, idEvento);
+            CambioEstadoPersistencia.insertarCambioEstado(idEstado,fechaHora, evento.getId());
 
-            return rechazado;
+            //return rechazado;
         }
     }
 }

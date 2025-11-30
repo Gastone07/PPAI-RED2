@@ -1,4 +1,5 @@
 using PPAI_REDSISMICA.Entidades;
+using PPAI_REDSISMICA.ModeloPersistencia;
 using PPAI_REDSISMICA.Persistencia;
 using System.Collections.Generic;
 using System.Linq;
@@ -18,7 +19,7 @@ namespace Controladores
 
         private List<EventoSismico> eventosPendientes = new List<EventoSismico>();
 
-        private Estado estadoBloqueado = new Estado();
+        private BloqueadoEnRevision estadoBloqueado = new BloqueadoEnRevision();
 
         private Usuario usuarioLogeado = new Usuario();
 
@@ -48,7 +49,8 @@ namespace Controladores
         private List<Sismografo> sismografos = new List<Sismografo>();
         private string nombreEstacion = "";
 
-        private Estado estadoSeleccionado = new Estado();
+        //Preguntar al gena como pongo esto.
+        private Estado estadoSeleccionado = new();
 
         // diccionario de sismografo y serie temporal
         private Dictionary<Sismografo, SerieTemporal> diccionarioSismografoSerie = [];
@@ -64,9 +66,9 @@ namespace Controladores
         {
             // Cargar los datos iniciales y asignarlos a los atributos del controlador
             //(eventosSismicos, listadoEstado, listadoCambiosEstado, listadoSesiones, sismografos) = Persistencia.ObtenerDatos2();
-            eventosSismicos = EventoSismico.obtenerTodoEventoSismico();
-            listadoEstado = Estado.obtenerEstados();
-            listadoCambiosEstado = CambioEstado.obtenerCambiosEstados();
+            eventosSismicos = EventoSismicoPersistencia.obtenerTodoEventoSismico();
+            listadoEstado = EstadoPersistencia.obtenerEstados();
+            listadoCambiosEstado = CambioEstadoPersistencia.obtenerCambiosEstados();
             listadoSesiones = Sesion.obtenerSesiones();
             sismografos = Sismografo.obtenerSismografos();
 

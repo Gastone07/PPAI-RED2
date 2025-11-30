@@ -28,23 +28,5 @@ namespace PPAI_REDSISMICA.Entidades
             return nombre;
         }
 
-        public OrigenDeGeneracion(DataRow data)
-        {
-            this.nombre = Convert.ToString(data["nombre"]) ?? string.Empty;
-            this.descripcion = Convert.ToString(data["descripcion"]) ?? string.Empty;
-        }
-
-        public static OrigenDeGeneracion recuperarOrigenDeGeneracionXID(int id)
-        {
-            GeneralAdapterSQL generalAdapterSQL = new GeneralAdapterSQL();
-            DataTable respuesta = generalAdapterSQL.EjecutarVista("Origenes WHERE idEventoSismico = " + id);
-            OrigenDeGeneracion origen = new OrigenDeGeneracion();
-            if (respuesta != null && respuesta.Rows.Count > 0 && respuesta.Rows[0][0].ToString() != "ERROR")
-            {
-                origen = new(respuesta.Rows[0]);
-
-            }
-            return origen;
-        }
     }
 }

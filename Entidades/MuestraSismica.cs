@@ -40,28 +40,6 @@ namespace PPAI_REDSISMICA.Entidades
             }
         }
 
-        public static List<MuestraSismica> obtenerMuestras()
-        {
-            GeneralAdapterSQL generalAdapterSQL = new GeneralAdapterSQL();
-            DataTable respuesta = generalAdapterSQL.EjecutarVista("Muestras");
-
-            List<MuestraSismica> detalles = new List<MuestraSismica>();
-
-            if (respuesta != null && respuesta.Rows.Count > 0 && respuesta.Rows[0][0].ToString() != "ERROR")
-            {
-                foreach (DataRow item in respuesta.Rows)
-                {
-                    detalles.Add(new MuestraSismica(item));
-                }
-            }
-            return detalles;
-        }
-
-        public MuestraSismica(DataRow data)
-        { 
-            this.fechaHoraMuestra = Convert.ToDateTime(data["fechaHoraMuestra"]);
-            this.detallesMuestrasSismicas = DetalleMuestraSismica.detallesMuestraSismicaFromDataTable((int)data["idMuestra"]);
-        }
     }
 
 }
