@@ -13,6 +13,8 @@ namespace PPAI_REDSISMICA.Entidades
         public string ambito { get; set; }
         public string nombreEstado { get; set; }
 
+        public int idEstado = 0;
+
         public Estado(string ambito, string nombreEstado)
         {
             this.ambito = ambito;
@@ -30,6 +32,8 @@ namespace PPAI_REDSISMICA.Entidades
         public abstract bool esPendienteRevisionExperto();
         public abstract bool esRechazado();
         public abstract bool esConfirmado();
+
+        public abstract int recuperarId();
 
         public abstract void cambiarEstadoEventoSismico(DateTime fechaHora, CambioEstado cambio, EventoSismico idEvento);
         public bool esAmbitoEvento()

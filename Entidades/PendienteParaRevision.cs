@@ -52,7 +52,10 @@ namespace PPAI_REDSISMICA.Entidades
             cambioEstado.sosActual(fechaHoraActual);
         }
 
-
+        public override int recuperarId()
+        {
+            return idEstado;
+        }
         public override bool esAutoDetectado(){  return false; }
         public override bool esBloqueadoEnRevision() { return false; }
         public override bool esPendienteRevisionExperto() { return false; }

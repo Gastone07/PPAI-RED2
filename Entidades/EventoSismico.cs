@@ -1,4 +1,5 @@
 using PPAI_REDSISMICA.Entidades;
+using PPAI_REDSISMICA.ModeloPersistencia;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -79,7 +80,7 @@ public class EventoSismico
     }
 
 
-    public bool esPendienteDeRevision()
+    public bool esPendienteDeRevisionViejo()
     {
         if (this.estadoActual.esPendienteDeRevision())
         {
@@ -89,6 +90,10 @@ public class EventoSismico
         return false; // El evento sismico no esta pendiente de revision
     }
 
+    public bool esPendienteDeRevision()
+    {
+        return estadoActual.esPendienteParaRevision();
+    }
 
     public CambioEstado buscarCambioEstadoAbierto()
     {
@@ -99,20 +104,26 @@ public class EventoSismico
         return new();// busco el cambio de estado abierto del evento sismico
     }
 
-    public  void actualizarCambioEstado(DateTime fechaHoraActual)
+    public  void actualizarCambioEstado(DateTime fechaHoraActual, CambioEstado cambioAbierto)
     {
-       this.estadoActual.cambiarEstadoEventoSismico(fechaHoraActual, this.buscarCambioEstadoAbierto(), this.id);
+       estadoActual.cambiarEstadoEventoSismico(fechaHoraActual, cambioAbierto, this);
     }
 
-    public CambioEstado crearCambioEstado(Estado estado, DateTime fechaHoraInicio)
+    public CambioEstado crearCambioEstado(BloqueadoEnRevision estado, DateTime fechaHoraInicio)
     {
         //creo el nuevo cambio de estado del evento sismico
         CambioEstado CambioEstado = new CambioEstado(fechaHoraInicio, null, estado);
 
-        this.CambioEstado = CambioEstado; // Actualiza el cambio de estado del evento sismico
+        this.CambioEstado.Add(CambioEstado); // Actualiza el cambio de estado del evento sismico
 
         //TENGO QUE HACER SET ESTADO
         this.setEstado(estado); // Actualiza el estado actual del evento sismico
+
+        //Agrego a BD el cambio de estado y el set estado
+        //PUEDE IR AL CONTROLADOR CON OTRA FUNCION
+
+        CambioEstadoPersistencia.insertarCambioEstado(estado.recuperarId(), fechaHoraInicio, getId());
+        EventoSismicoPersistencia.actualizarEstadoActual(estado.recuperarId(), getId());
 
         return CambioEstado; // Retorna el cambio de estado creado
 

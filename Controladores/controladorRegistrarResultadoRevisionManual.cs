@@ -69,7 +69,7 @@ namespace Controladores
             eventosSismicos = EventoSismicoPersistencia.obtenerTodoEventoSismico();
             listadoEstado = EstadoPersistencia.obtenerEstados();
             listadoCambiosEstado = CambioEstadoPersistencia.obtenerCambiosEstados();
-            listadoSesiones = Sesion.obtenerSesiones();
+            listadoSesiones = SesionPersistencia.obtenerSesiones();
             sismografos = Sismografo.obtenerSismografos();
 
             buscarAutodetectado();
@@ -88,6 +88,7 @@ namespace Controladores
                 }
             }
 
+            //preparo los datos para mandarlos a la pantalla //PREGUNTAR A GENA
             var eventosPreparados = eventosPendientes.Select(evento => new
             {
                 FechaHora = evento.FechaHoraOcurrencia,
@@ -131,9 +132,10 @@ namespace Controladores
         {
             foreach (Estado estado in listadoEstado)
             {
-                if (estado.esAmbitoEvento() && estado.esEstadoBloqueado())
+                if (estado.esAmbitoEvento() && estado.esBloqueadoEnRevision())
                 {
-                    estadoBloqueado = estado; // Asignar el estado bloqueado encontrado
+                    estadoBloqueado = (BloqueadoEnRevision)estado; // Asignar el estado bloqueado encontrado
+
                     break; // Salir del bucle una vez encontrado
                 }
             }

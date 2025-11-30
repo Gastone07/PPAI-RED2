@@ -40,6 +40,11 @@ namespace PPAI_REDSISMICA.Entidades
             this.nombreEstado = nombreEstado;
         }
 
+        public override int recuperarId()
+        {
+            return idEstado;
+        }
+
         public override bool esAutoDetectado() { return false; }
         public override bool esBloqueadoEnRevision() { return true; }
         public override bool esPendienteRevisionExperto() { return false; }

@@ -75,5 +75,17 @@ namespace PPAI_REDSISMICA.ModeloPersistencia
             }
             return listaEventos;
         }
+
+        public static bool actualizarEstadoActual(int idEstado, int idEvento)
+        {
+            string consulta = "UPDATE eventosSismico SET idEstadoActual = " + idEstado + " WHERE idSismo = " + idEvento + ";" +
+                "Select top(1)* from eventosSismico Order by idSismo desc";
+
+            GeneralAdapterSQL generalAdapterSQL = new GeneralAdapterSQL();
+            DataTable respuesta = generalAdapterSQL.EjecutarQuery(consulta);
+
+            if (respuesta != null && respuesta.Rows.Count > 0 && respuesta.Rows[0][0].ToString() != "ERROR") return true;
+            else return false;
+        }
     }
 }
