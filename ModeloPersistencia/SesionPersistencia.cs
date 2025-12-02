@@ -22,15 +22,22 @@ namespace PPAI_REDSISMICA.ModeloPersistencia
                 //Hubo un error al consultar la base de datos
                 foreach (DataRow item in respuesta.Rows)
                 {
-                    int idUsuario = int.Parse(respuesta.Rows[0][0].ToString() ?? "");
+                    int idUsuario = int.Parse(item[0]?.ToString() ?? "0");
 
                     Usuario usuario = UsuarioPersistencia.recuperarUsuarioXID(idUsuario);
 
+                    DateTime fechaInicio;
+                    DateTime fechaFin;
+
+                    // convierte si puede, sino pone null o MinValue
+                    DateTime.TryParse(item[2]?.ToString(), out fechaInicio);
+                    DateTime.TryParse(item[3]?.ToString(), out fechaFin);
+
                     listaSesiones.Add(new Sesion(
                         usuario,
-                        DateTime.Parse(item["fechaHoraInicio"].ToString() ?? ""),
-                        DateTime.Parse(item["fechaHoraFin"].ToString() ?? "")
-                        ));
+                        fechaInicio,
+                        fechaFin
+                    ));
                 }
 
             }

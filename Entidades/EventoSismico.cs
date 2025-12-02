@@ -109,7 +109,7 @@ public class EventoSismico
        estadoActual.cambiarEstadoEventoSismico(fechaHoraActual, cambioAbierto, this);
     }
 
-    public CambioEstado crearCambioEstado(BloqueadoEnRevision estado, DateTime fechaHoraInicio)
+    public CambioEstado crearCambioEstado(Estado estado, DateTime fechaHoraInicio)
     {
         //creo el nuevo cambio de estado del evento sismico
         CambioEstado CambioEstado = new CambioEstado(fechaHoraInicio, null, estado);
@@ -120,7 +120,6 @@ public class EventoSismico
         this.setEstado(estado); // Actualiza el estado actual del evento sismico
 
         //Agrego a BD el cambio de estado y el set estado
-        //PUEDE IR AL CONTROLADOR CON OTRA FUNCION
 
         CambioEstadoPersistencia.insertarCambioEstado(estado.recuperarId(), fechaHoraInicio, getId());
         EventoSismicoPersistencia.actualizarEstadoActual(estado.recuperarId(), getId());
@@ -153,11 +152,6 @@ public class EventoSismico
             return this.seriesTemporales; // Retorna la lista de series temporales asociadas al evento sismico
         }
 
-    }
-
-    public CambioEstado GetCambioEstado()
-    {
-        return CambioEstado;
     }
 
     public Estado GetEstadoActual()

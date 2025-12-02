@@ -49,33 +49,5 @@ namespace PPAI_REDSISMICA.Entidades
             }
         }
 
-        public Sismografo(DataRow data)
-        {
-            this.seriesTemporales = null;
-            this.estacionSismografica = null;
-            this.fechaAdquisicion = Convert.ToDateTime(data["fecha_adquisicion"]);
-            this.estacionSismografica = null;
-            this.nroSerie = Convert.ToInt32(data["nro_serie"]);
-            this.identificador = Convert.ToInt32(data["idSismografo"]);
-        }
-
-        public static List<Sismografo> obtenerSismografos()
-        {
-            GeneralAdapterSQL generalAdapterSQL = new GeneralAdapterSQL();
-            DataTable respuesta = generalAdapterSQL.EjecutarVista("sismografos");
-            List<Sismografo> listaSismografos = new List<Sismografo>();
-
-            if (respuesta != null && respuesta.Rows.Count > 0 && respuesta.Rows[0][0].ToString() != "ERROR")
-            {
-
-                //Hubo un error al consultar la base de datos
-                foreach (DataRow item in respuesta.Rows)
-                {
-                    listaSismografos.Add(new Sismografo(item));
-                }
-
-            }
-            return listaSismografos;
-        }
     }
 }

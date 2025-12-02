@@ -24,8 +24,8 @@ namespace PPAI_REDSISMICA.ModeloPersistencia
                 foreach (DataRow item in respuesta.Rows)
                 {
                     usuario = new Usuario(
-                        respuesta.Rows[0][0].ToString() ?? "",
-                        respuesta.Rows[0][1].ToString() ?? ""
+                        respuesta.Rows[0][1].ToString() ?? "",
+                        respuesta.Rows[0][2].ToString() ?? ""
                         );
                 }
 
@@ -41,8 +41,8 @@ namespace PPAI_REDSISMICA.ModeloPersistencia
             if (respuesta != null && respuesta.Rows.Count > 0 && respuesta.Rows[0][0].ToString() != "ERROR")
             {
                 usuario = new Usuario(
-                         respuesta.Rows[0][0].ToString() ?? "",
-                         respuesta.Rows[0][1].ToString() ?? ""
+                         respuesta.Rows[0][1].ToString() ?? "",
+                         respuesta.Rows[0][2].ToString() ?? ""
                          );
 
             }

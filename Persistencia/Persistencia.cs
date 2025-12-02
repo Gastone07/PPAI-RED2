@@ -10,6 +10,7 @@ namespace PPAI_REDSISMICA.Persistencia
 {
     public static class Persistencia
     {
+        /*
         public static (List<EventoSismico>, List<Estado>, List<CambioEstado>, List<Sesion>, List<Sismografo>) ObtenerDatos()
         {
             // Simulación de datos para corregir el error CS0234
@@ -254,7 +255,7 @@ namespace PPAI_REDSISMICA.Persistencia
                 listadoSismografos
             );
         }
-
+        */
         public static (List<EventoSismico>, List<Estado>, List<CambioEstado>, List<Sesion>, List<Sismografo>) ObtenerDatos2()
         {
        

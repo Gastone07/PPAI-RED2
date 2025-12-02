@@ -31,10 +31,9 @@ namespace PPAI_REDSISMICA.Entidades
         {
             this.ambito = ambito;
         }
-        public new string getNombreEstado()
-        {
-            return nombreEstado;
-        }
+
+        public override string getNombreEstado() => nombreEstado;
+
         public void setNombreEstado(string nombreEstado)
         {
             this.nombreEstado = nombreEstado;

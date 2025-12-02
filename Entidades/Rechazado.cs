@@ -1,4 +1,5 @@
-﻿using System;
+﻿using PPAI_REDSISMICA.ModeloPersistencia;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -21,6 +22,23 @@ namespace PPAI_REDSISMICA.Entidades
             this.nombreEstado = nombreEstado;
         }
 
+        public override int recuperarId()
+        {
+            return idEstado;
+        }
+
+        public override string getNombreEstado() => nombreEstado;
+        public override void cambiarEstadoEventoSismico(DateTime fecha, CambioEstado cambio, EventoSismico evento)
+        {
+            throw new NotSupportedException("Rechazado no soporta cambiar estado sísmico.");
+        }
+
+        public CambioEstado crearNuevoCambioEstado(DateTime fechaHoraActual, Rechazado estado)
+        {
+            return new CambioEstado(fechaHoraActual, null, estado);
+
+        }
+
         public string getAmbito()
         {
             return ambito;
@@ -29,11 +47,6 @@ namespace PPAI_REDSISMICA.Entidades
         public void setAmbito(string ambito)
         {
             this.ambito = ambito;
-        }
-
-        public new string getNombreEstado()
-        {
-            return nombreEstado;
         }
 
         public void setNombreEstado(string nombreEstado)

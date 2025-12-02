@@ -24,7 +24,7 @@ namespace PPAI_REDSISMICA.ModeloPersistencia
                 {
                     int idDetalle = int.Parse(item["idTipoValor"].ToString() ?? "");
 
-                    TipoDeDato tipo = TipoDeDatoPersistencia.buscarTipoDatoXID(idMuestra);
+                    TipoDeDato tipo = TipoDeDatoPersistencia.buscarTipoDatoXID(idDetalle);
 
                     detalles.Add(new DetalleMuestraSismica(
                         int.Parse(item["valor"].ToString() ?? ""),

@@ -57,7 +57,6 @@ namespace PPAI_REDSISMICA.ModeloPersistencia
             switch (tipo)
             {
                 //Agregar las demas clases de estado
-
                 case 2:
                     return new AutoDetectado(ambito, nombreEstado);
 
@@ -65,13 +64,13 @@ namespace PPAI_REDSISMICA.ModeloPersistencia
                     return new BloqueadoEnRevision(ambito, nombreEstado);
 
                 case 4:
-                    return new PendienteParaRevision(ambito, nombreEstado);
+                    return new Confirmado(ambito, nombreEstado);
 
                 case 5:
                     return new Rechazado(ambito, nombreEstado);
 
                 case 6:
-                    return new Confirmado(ambito, nombreEstado);
+                    return new PendienteParaRevision(ambito, nombreEstado);
 
                 case 7:
                     return new PendienteRevisionExperto(ambito, nombreEstado);

@@ -9,11 +9,10 @@ using Vistas;
 
 namespace Controladores
 {
-    public class controladorRegistrarResultadoRevisionManual
+    public class controladorRegistrarResultadoRevisionManual(pantallaRegistrarResultadoRevisionManual pan)
     {
-        #region aributos
 
-        private readonly pantallaRegistrarResultadoRevisionManual pantalla;
+        #region aributos
         // Declarar una variable que contenga un listado de eventos s�smicos
         private List<EventoSismico> eventosSismicos = new List<EventoSismico>();
 
@@ -49,18 +48,13 @@ namespace Controladores
         private List<Sismografo> sismografos = new List<Sismografo>();
         private string nombreEstacion = "";
 
-        //Preguntar al gena como pongo esto.
-        private Estado estadoSeleccionado = new();
+        
+        private Estado estadoSeleccionado;
 
         // diccionario de sismografo y serie temporal
         private Dictionary<Sismografo, SerieTemporal> diccionarioSismografoSerie = [];
 
         #endregion
-        //Paso 1 del Caso de Uso
-        public controladorRegistrarResultadoRevisionManual(pantallaRegistrarResultadoRevisionManual pan)
-        {
-            this.pantalla = pan;
-        }
 
         public void registrarResultadoDeRevisionManual()
         {
@@ -70,7 +64,7 @@ namespace Controladores
             listadoEstado = EstadoPersistencia.obtenerEstados();
             listadoCambiosEstado = CambioEstadoPersistencia.obtenerCambiosEstados();
             listadoSesiones = SesionPersistencia.obtenerSesiones();
-            sismografos = Sismografo.obtenerSismografos();
+            sismografos = SismografoPersistencia.obtenerSismografos();
 
             buscarAutodetectado();
         }
@@ -100,7 +94,7 @@ namespace Controladores
             }).ToList<object>();
 
             // Pasar los datos preparados a la pantalla (la vista mostrará las propiedades del objeto anónimo)
-            pantalla.presentarEventosSismicosPendientesDeRevision(eventosPreparados);
+            pan.presentarEventosSismicosPendientesDeRevision(eventosPreparados);
         }
 
         public void tomarSeleccionEventoSismico(EventoSismico eventoSeleccionado)
@@ -183,7 +177,7 @@ namespace Controladores
             obtenerDatosSeriesTemporal(eventoSeleccionado);
             generarSismograma(seriesVisitadas, muestrasVisitadas, detallesVisitados, tipoDatoPorDetalle);
 
-            pantalla.mostrarDetalleEventoSismico(nombreAlcance, nombreClasificacion, nombreOrigen, eventoSeleccionado.ValorMagnitud);
+            pan.mostrarDetalleEventoSismico(nombreAlcance, nombreClasificacion, nombreOrigen, eventoSeleccionado.ValorMagnitud);
 
         }
         public void obtenerDatosSeriesTemporal(EventoSismico eventoSeleccionado)
@@ -231,24 +225,25 @@ namespace Controladores
             //paso 14 al 17 con alternativas
             if (opcionCombo == "Rechazar evento")
             {
-                estadoSeleccionado = Estado.esRechazado(listadoEstado);
-                cambioEstadoAbierto = eventoSelec.buscarCambioEstadoAbierto(fechaHoraActual);
+                //estadoSeleccionado = Estado.esRechazado(listadoEstado);
+                estadoSeleccionado = listadoEstado.First(e => e.esRechazado());
+                cambioEstadoAbierto = eventoSelec.buscarCambioEstadoAbierto();
                 
                 cambioEstadoNuevo = eventoSelec.crearCambioEstado(estadoSeleccionado, fechaHoraActual);
                 listadoCambiosEstado.Add(cambioEstadoNuevo);
             }
             else if (opcionCombo == "Confirmar evento")
             {
-                estadoSeleccionado = Estado.esConfirmado(listadoEstado);
-                cambioEstadoAbierto = eventoSelec.buscarCambioEstadoAbierto(fechaHoraActual);
+                estadoSeleccionado = listadoEstado.First(e => e.esConfirmado());
+                cambioEstadoAbierto = eventoSelec.buscarCambioEstadoAbierto();
                 
                 cambioEstadoNuevo = eventoSelec.crearCambioEstado(estadoSeleccionado, fechaHoraActual);
                 listadoCambiosEstado.Add(cambioEstadoNuevo);
             }
             else if (opcionCombo == "Solicitar revisi�n a experto")
             {
-                estadoSeleccionado = Estado.esRevisadoExperto(listadoEstado);
-                cambioEstadoAbierto = eventoSelec.buscarCambioEstadoAbierto(fechaHoraActual);
+                estadoSeleccionado = listadoEstado.First(e => e.esEstadoRevisadoPorExperto());
+                cambioEstadoAbierto = eventoSelec.buscarCambioEstadoAbierto();
                 
                 cambioEstadoNuevo = eventoSelec.crearCambioEstado(estadoSeleccionado, fechaHoraActual);
                 listadoCambiosEstado.Add(cambioEstadoNuevo);

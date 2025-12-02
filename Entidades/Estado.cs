@@ -96,10 +96,7 @@ namespace PPAI_REDSISMICA.Entidades
             }
         }
 
-        public string getNombreEstado()
-        {
-            return this.nombreEstado;
-        }
+        public abstract string getNombreEstado();
 
         public bool esPendienteDeRevision()
         {
@@ -112,6 +109,7 @@ namespace PPAI_REDSISMICA.Entidades
                 return false; // El estado no es pendiente de revision
             }
         }
+
 
         
     }

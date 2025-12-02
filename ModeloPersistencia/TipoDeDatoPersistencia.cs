@@ -19,9 +19,9 @@ namespace PPAI_REDSISMICA.ModeloPersistencia
             if (respuesta != null && respuesta.Rows.Count > 0 && respuesta.Rows[0][0].ToString() != "ERROR")
             {
                 TipoDeDato tipo = new TipoDeDato(
-                    respuesta.Rows[0][0].ToString() ?? "", 
                     respuesta.Rows[0][1].ToString() ?? "", 
-                    double.Parse(respuesta.Rows[0][2].ToString() ?? "") 
+                    respuesta.Rows[0][2].ToString() ?? "", 
+                    double.Parse(respuesta.Rows[0][3].ToString() ?? "") 
                     );
                 
                 return tipo;
