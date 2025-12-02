@@ -1,52 +1,323 @@
 <Window x:Class="Vistas.pantallaRegistrarResultadoRevisionManual"  
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"  
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"  
-        Title="Registrar Resultado Revisión Manual" Height="575" Width="825">
-    <StackPanel Margin="20">
-        <!-- Título -->
-        <TextBlock Text="Eventos Sismicos" FontSize="22" FontWeight="Bold" Margin="0,0,0,10" HorizontalAlignment="Center"/>
-        <DataGrid x:Name="dgEventosSismicos" AutoGenerateColumns="False" MouseDoubleClick="dgEventosSismicos_MouseDoubleClick"
-                  IsReadOnly="True" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch" Height="160">
-            <DataGrid.Columns>
-                <DataGridTextColumn Header="Fecha Inicio" Binding="{Binding FechaInicio}" />
-                <DataGridTextColumn Header="Fecha Fin" Binding="{Binding FechaFin}" />
-                <DataGridTextColumn Header="Magnitud" Binding="{Binding Magnitud}" />
-                <DataGridTextColumn Header="Lat. Epicentro" Binding="{Binding LatitudEpicentro}" />
-                <DataGridTextColumn Header="Lon. Epicentro" Binding="{Binding LongitudEpicentro}" />
-                <DataGridTextColumn Header="Lat. Hipocentro" Binding="{Binding LatitudHipocentro}" />
-                <DataGridTextColumn Header="Lon. Hipocentro" Binding="{Binding LongitudHipocentro}" />
-            </DataGrid.Columns>
-        </DataGrid>
+        Title="PractiSismo - Registrar Resultado Revisión Manual" Height="575" Width="825"
+        WindowStartupLocation="CenterScreen"
+        Background="#FFF0F8FF">
 
-        <!-- DataGrid más corto en Y -->
+    <Window.Resources>
+        <!-- Estilo para botones modernos -->
+        <Style x:Key="ModernButton" TargetType="Button">
+            <Setter Property="Background">
+                <Setter.Value>
+                    <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
+                        <GradientStop Color="#FF4A9FDB" Offset="0"/>
+                        <GradientStop Color="#FF2E7BC7" Offset="1"/>
+                    </LinearGradientBrush>
+                </Setter.Value>
+            </Setter>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="FontFamily" Value="Segoe UI"/>
+            <Setter Property="FontSize" Value="12"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="Padding" Value="15,8"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Effect">
+                <Setter.Value>
+                    <DropShadowEffect Color="#40000000" BlurRadius="6" Direction="315" ShadowDepth="2"/>
+                </Setter.Value>
+            </Setter>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border Background="{TemplateBinding Background}"
+                                CornerRadius="8"
+                                BorderThickness="{TemplateBinding BorderThickness}">
+                            <ContentPresenter HorizontalAlignment="Center"
+                                            VerticalAlignment="Center"
+                                            Content="{TemplateBinding Content}"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter Property="Background">
+                                    <Setter.Value>
+                                        <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
+                                            <GradientStop Color="#FF5BAEE0" Offset="0"/>
+                                            <GradientStop Color="#FF3F8BD1" Offset="1"/>
+                                        </LinearGradientBrush>
+                                    </Setter.Value>
+                                </Setter>
+                            </Trigger>
+                            <Trigger Property="IsEnabled" Value="False">
+                                <Setter Property="Background" Value="#FFB0B0B0"/>
+                                <Setter Property="Foreground" Value="#FF707070"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
 
-        <!-- Detalles del evento, ocultos por defecto -->
-        <StackPanel x:Name="panelDetalles" Orientation="Horizontal" Visibility="Collapsed" Margin="10">
-            <!-- Panel de detalles existente -->
-            <StackPanel Width="250" Margin="0,0,20,0">
-                <TextBlock Text="Alcance:" FontWeight="Bold"/>
-                <TextBox x:Name="txtAlcance"  Margin="0,0,0,10"/>
-                <TextBlock Text="Clasificación:" FontWeight="Bold"/>
-                <TextBox x:Name="txtClasificacion" IsReadOnly="True" Margin="0,0,0,10"/>
-                <TextBlock Text="Origen:" FontWeight="Bold"/>
-                <TextBox x:Name="txtOrigen"  Margin="0,0,0,10"/>
-                <TextBlock Text="Magnitud:" FontWeight="Bold"/>
-                <TextBox x:Name="txtMagnitud"  Margin="0,0,0,10"/>
-                <Button x:Name="btnVisualizarMapa" Content="Visualizar Mapa" Width="150" Height="35" Margin="0,10,0,0" Click="btnVisualizarMapa_Click"/>
-                <TextBlock Text="Seleccione una opción:" FontWeight="Bold" Margin="0,20,0,5"/>
-                <ComboBox x:Name="cbOpciones" Width="200" Margin="0,0,0,10" SelectionChanged="cbOpciones_SelectionChanged">
-                    <ComboBoxItem Content="Confirmar evento"/>
-                    <ComboBoxItem Content="Rechazar evento"/>
-                    <ComboBoxItem Content="Solicitar revisión a experto"/>
-                </ComboBox>
+        <!-- Estilo para TextBoxes -->
+        <Style x:Key="ModernTextBox" TargetType="TextBox">
+            <Setter Property="Padding" Value="8,6"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="BorderBrush" Value="#FFCCCCCC"/>
+            <Setter Property="FontFamily" Value="Segoe UI"/>
+            <Setter Property="FontSize" Value="12"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="TextBox">
+                        <Border Background="{TemplateBinding Background}"
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="{TemplateBinding BorderThickness}"
+                                CornerRadius="4">
+                            <ScrollViewer x:Name="PART_ContentHost"/>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <!-- Estilo para ComboBox -->
+        <Style x:Key="ModernComboBox" TargetType="ComboBox">
+            <Setter Property="Padding" Value="8,6"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="BorderBrush" Value="#FFCCCCCC"/>
+            <Setter Property="FontFamily" Value="Segoe UI"/>
+            <Setter Property="FontSize" Value="12"/>
+        </Style>
+
+        <!-- Estilo para DataGrid -->
+        <Style x:Key="ModernDataGrid" TargetType="DataGrid">
+            <Setter Property="Background" Value="White"/>
+            <Setter Property="BorderBrush" Value="#FFD0D0D0"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="GridLinesVisibility" Value="Horizontal"/>
+            <Setter Property="HorizontalGridLinesBrush" Value="#FFE0E0E0"/>
+            <Setter Property="AlternatingRowBackground" Value="#FFF8F8F8"/>
+            <Setter Property="RowBackground" Value="White"/>
+            <Setter Property="FontFamily" Value="Segoe UI"/>
+            <Setter Property="FontSize" Value="12"/>
+        </Style>
+    </Window.Resources>
+
+    <!-- Fondo con gradiente similar al MainWindow -->
+    <Grid>
+        <Grid.Background>
+            <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
+                <GradientStop Color="#FFF0F8FF" Offset="0"/>
+                <GradientStop Color="#FFE6F3FF" Offset="0.5"/>
+                <GradientStop Color="#FFD4EDFA" Offset="1"/>
+            </LinearGradientBrush>
+        </Grid.Background>
+
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <!-- Header similar al MainWindow -->
+        <Border Grid.Row="0" Padding="20,15" Margin="0,0,0,20"
+                CornerRadius="0,0,15,15">
+            <Border.Background>
+                <LinearGradientBrush StartPoint="0,0" EndPoint="1,0">
+                    <GradientStop Color="#FF2E7BC7" Offset="0"/>
+                    <GradientStop Color="#FF1E5F9F" Offset="1"/>
+                </LinearGradientBrush>
+            </Border.Background>
+            <Border.Effect>
+                <DropShadowEffect Color="#40000000" BlurRadius="6" Direction="270" ShadowDepth="2"/>
+            </Border.Effect>
+
+            <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                <!-- Logo/Icono simplificado -->
+                <Border Background="#20FFFFFF" 
+                        CornerRadius="20" 
+                        Padding="8" 
+                        Margin="0,0,15,0">
+                    <Ellipse Width="20" Height="20" Fill="White"/>
+                </Border>
+                
+                <!-- Títulos -->
+                <StackPanel>
+                    <TextBlock Text="PractiSismo" 
+                              FontSize="22" 
+                              FontWeight="Bold" 
+                              Foreground="White"/>
+                    <TextBlock Text="Registro de Resultado Revisión Manual" 
+                              FontSize="14" 
+                              Foreground="#FFCCE6FF" 
+                              FontStyle="Italic"/>
+                </StackPanel>
             </StackPanel>
-            <!-- Panel para la imagen y el título -->
-            <StackPanel Width="300" HorizontalAlignment="Left">
-                <TextBlock Text="Sismografo" FontWeight="Bold" FontSize="16" Margin="0,0,0,10" HorizontalAlignment="Center"/>
-                <Image Source="/img/sismografo2.jpg" Width="180" Height="120" Stretch="Uniform" HorizontalAlignment="Center"/>
-                <Image x:Name="imgMapa" Width="250" Height="180" Visibility="Collapsed" Margin="0,20,0,0"/>
-                <Button x:Name="btnConfirmar" Content="Confirmar" Width="120" Height="35" Margin="0,20,0,0" IsEnabled="False" Click="btnConfirmar_Click"/>
+        </Border>
+
+        <!-- Contenido principal -->
+        <StackPanel Grid.Row="1" Margin="25">
+            <!-- Panel de eventos con título mejorado -->
+            <Border Background="White" 
+                    CornerRadius="12" 
+                    Padding="20" 
+                    Margin="0,0,0,20">
+                <Border.Effect>
+                    <DropShadowEffect Color="#20000000" BlurRadius="10" Direction="315" ShadowDepth="3"/>
+                </Border.Effect>
+                
+                <StackPanel>
+                    <!-- Título simplificado -->
+                    <StackPanel Orientation="Horizontal" 
+                               HorizontalAlignment="Center"
+                               Margin="0,0,0,15">
+                        <Ellipse Width="18" Height="18" Fill="#FF2E7BC7" Margin="0,0,10,0"/>
+                        <TextBlock Text="Eventos Sísmicos Pendientes" 
+                                  FontSize="20" 
+                                  FontWeight="Bold" 
+                                  Foreground="#FF2E7BC7"/>
+                    </StackPanel>
+                    
+                    <!-- DataGrid con estilo mejorado (FUNCIONALIDAD INTACTA) -->
+                    <DataGrid x:Name="dgEventosSismicos" 
+                             AutoGenerateColumns="False" 
+                             MouseDoubleClick="dgEventosSismicos_MouseDoubleClick"
+                             IsReadOnly="True" 
+                             HorizontalContentAlignment="Stretch" 
+                             VerticalContentAlignment="Stretch" 
+                             Height="160"
+                             Style="{StaticResource ModernDataGrid}">
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Header="Fecha Inicio" Binding="{Binding FechaInicio}" />
+                            <DataGridTextColumn Header="Fecha Fin" Binding="{Binding FechaFin}" />
+                            <DataGridTextColumn Header="Magnitud" Binding="{Binding Magnitud}" />
+                            <DataGridTextColumn Header="Lat. Epicentro" Binding="{Binding LatitudEpicentro}" />
+                            <DataGridTextColumn Header="Lon. Epicentro" Binding="{Binding LongitudEpicentro}" />
+                            <DataGridTextColumn Header="Lat. Hipocentro" Binding="{Binding LatitudHipocentro}" />
+                            <DataGridTextColumn Header="Lon. Hipocentro" Binding="{Binding LongitudHipocentro}" />
+                        </DataGrid.Columns>
+                    </DataGrid>
+                </StackPanel>
+            </Border>
+
+            <!-- Panel de detalles mejorado (FUNCIONALIDAD INTACTA) -->
+            <StackPanel x:Name="panelDetalles" 
+                       Orientation="Horizontal" 
+                       Visibility="Collapsed">
+                
+                <!-- Panel izquierdo con formulario -->
+                <Border Background="White" 
+                        CornerRadius="12" 
+                        Padding="20" 
+                        Margin="0,0,15,0"
+                        Width="280">
+                    <Border.Effect>
+                        <DropShadowEffect Color="#20000000" BlurRadius="8" Direction="315" ShadowDepth="3"/>
+                    </Border.Effect>
+                    
+                    <StackPanel>
+                        <!-- Título del panel simplificado -->
+                        <TextBlock Text="Detalles del Evento" 
+                                  FontSize="16" 
+                                  FontWeight="Bold" 
+                                  Foreground="#FF2E7BC7"
+                                  Margin="0,0,0,20"
+                                  HorizontalAlignment="Center"/>
+                        
+                        <!-- Campos del formulario (NOMBRES Y EVENTOS INTACTOS) -->
+                        <TextBlock Text="Alcance:" FontWeight="Bold" Foreground="#FF333333" Margin="0,0,0,5"/>
+                        <TextBox x:Name="txtAlcance" 
+                                Margin="0,0,0,15"
+                                Style="{StaticResource ModernTextBox}"/>
+                        
+                        <TextBlock Text="Clasificación:" FontWeight="Bold" Foreground="#FF333333" Margin="0,0,0,5"/>
+                        <TextBox x:Name="txtClasificacion" 
+                                IsReadOnly="True" 
+                                Margin="0,0,0,15"
+                                Style="{StaticResource ModernTextBox}"
+                                Background="#FFF5F5F5"/>
+                        
+                        <TextBlock Text="Origen:" FontWeight="Bold" Foreground="#FF333333" Margin="0,0,0,5"/>
+                        <TextBox x:Name="txtOrigen" 
+                                Margin="0,0,0,15"
+                                Style="{StaticResource ModernTextBox}"/>
+                        
+                        <TextBlock Text="Magnitud:" FontWeight="Bold" Foreground="#FF333333" Margin="0,0,0,5"/>
+                        <TextBox x:Name="txtMagnitud" 
+                                Margin="0,0,0,20"
+                                Style="{StaticResource ModernTextBox}"/>
+                        
+                        <!-- Botón Visualizar Mapa (EVENTO INTACTO) -->
+                        <Button x:Name="btnVisualizarMapa" 
+                               Content="Visualizar Mapa" 
+                               Click="btnVisualizarMapa_Click"
+                               Style="{StaticResource ModernButton}"
+                               Width="180" 
+                               Height="35" 
+                               Margin="0,0,0,20"/>
+                        
+                        <!-- ComboBox de opciones (EVENTO Y CONTENIDO INTACTOS) -->
+                        <TextBlock Text="Seleccione una opción:" 
+                                  FontWeight="Bold" 
+                                  Foreground="#FF333333"
+                                  Margin="0,0,0,8"/>
+                        <ComboBox x:Name="cbOpciones" 
+                                 SelectionChanged="cbOpciones_SelectionChanged"
+                                 Style="{StaticResource ModernComboBox}"
+                                 Width="220">
+                            <ComboBoxItem Content="Confirmar evento"/>
+                            <ComboBoxItem Content="Rechazar evento"/>
+                            <ComboBoxItem Content="Solicitar revisión a experto"/>
+                        </ComboBox>
+                    </StackPanel>
+                </Border>
+                
+                <!-- Panel derecho con imagen y mapa -->
+                <Border Background="White" 
+                        CornerRadius="12" 
+                        Padding="20" 
+                        Width="320">
+                    <Border.Effect>
+                        <DropShadowEffect Color="#20000000" BlurRadius="8" Direction="315" ShadowDepth="3"/>
+                    </Border.Effect>
+                    
+                    <StackPanel HorizontalAlignment="Center">
+                        <!-- Título del sismógrafo -->
+                        <TextBlock Text="Sismógrafo" 
+                                  FontWeight="Bold" 
+                                  FontSize="16" 
+                                  Foreground="#FF2E7BC7"
+                                  Margin="0,0,0,15" 
+                                  HorizontalAlignment="Center"/>
+                        
+                        <!-- Imagen del sismógrafo (FUENTE INTACTA) -->
+                        <Border CornerRadius="8" 
+                               BorderThickness="2" 
+                               BorderBrush="#FFE0E0E0">
+                            <Image Source="/img/sismografo2.jpg" 
+                                  Width="180" 
+                                  Height="120" 
+                                  Stretch="Uniform"/>
+                        </Border>
+                        
+                        <!-- Imagen del mapa (NOMBRES Y VISIBILIDAD INTACTOS) -->
+                        <Image x:Name="imgMapa" 
+                              Width="250" 
+                              Height="180" 
+                              Visibility="Collapsed" 
+                              Margin="0,20,0,0"/>
+                        
+                        <!-- Botón Confirmar (EVENTO INTACTO) -->
+                        <Button x:Name="btnConfirmar" 
+                               Content="Confirmar" 
+                               Click="btnConfirmar_Click"
+                               Style="{StaticResource ModernButton}"
+                               Width="140" 
+                               Height="35" 
+                               Margin="0,25,0,0" 
+                               IsEnabled="False"/>
+                    </StackPanel>
+                </Border>
             </StackPanel>
         </StackPanel>
-    </StackPanel>
+    </Grid>
 </Window>

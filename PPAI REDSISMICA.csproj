@@ -14,6 +14,8 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Remove="img\fondo1.jpg" />
+    <None Remove="img\fondo2.jpg" />
     <None Remove="img\sismografo2.jpg" />
   </ItemGroup>
 
@@ -23,6 +25,8 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Resource Include="img\fondo1.jpg" />
+    <Resource Include="img\fondo2.jpg" />
     <Resource Include="img\sismografo2.jpg">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Resource>

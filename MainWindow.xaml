@@ -5,22 +5,114 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:PPAI_REDSISMICA"
         mc:Ignorable="d"
-        Title="MainWindow" Height="480" Width="1024">
+        Title="PractiSismo - Sistema de Monitoreo" Height="480" Width="1024"
+        WindowStartupLocation="CenterScreen">
+
+    <Window.Resources>
+        <!-- Estilo para el botón principal -->
+        <Style x:Key="ModernButton" TargetType="Button">
+            <Setter Property="Background">
+                <Setter.Value>
+                    <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
+                        <GradientStop Color="#FF4A9FDB" Offset="0"/>
+                        <GradientStop Color="#FF2E7BC7" Offset="1"/>
+                    </LinearGradientBrush>
+                </Setter.Value>
+            </Setter>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="FontFamily" Value="Segoe UI"/>
+            <Setter Property="FontSize" Value="14"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="Padding" Value="20,12"/>
+            <Setter Property="Margin" Value="10"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border Background="{TemplateBinding Background}"
+                                CornerRadius="8"
+                                BorderThickness="{TemplateBinding BorderThickness}"
+                                BorderBrush="{TemplateBinding BorderBrush}">
+                            <ContentPresenter HorizontalAlignment="Center"
+                                            VerticalAlignment="Center"
+                                            Content="{TemplateBinding Content}"
+                                            ContentTemplate="{TemplateBinding ContentTemplate}"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter Property="Background">
+                                    <Setter.Value>
+                                        <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
+                                            <GradientStop Color="#FF5BAEE0" Offset="0"/>
+                                            <GradientStop Color="#FF3F8BD1" Offset="1"/>
+                                        </LinearGradientBrush>
+                                    </Setter.Value>
+                                </Setter>
+                            </Trigger>
+                            <Trigger Property="IsPressed" Value="True">
+                                <Setter Property="Background">
+                                    <Setter.Value>
+                                        <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
+                                            <GradientStop Color="#FF3A8AD6" Offset="0"/>
+                                            <GradientStop Color="#FF1E6BB8" Offset="1"/>
+                                        </LinearGradientBrush>
+                                    </Setter.Value>
+                                </Setter>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </Window.Resources>
+
     <Grid>
+        <!-- Fondo con imagen fondo1.jpg -->
+        <Grid.Background>
+            <ImageBrush ImageSource="/img/fondo1.jpg" 
+                       Stretch="None" 
+                       Opacity="0.7"/>
+        </Grid.Background>
+
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
-        <!-- Botones arriba -->
-        <StackPanel Orientation="Horizontal" Margin="20,0,0,0" HorizontalAlignment="Left" VerticalAlignment="Top" Grid.Row="0">
-            <Button x:Name="btnRegistrarRevision" Content="Registrar resultado de revisión manual" Click="btnRegistrarRevision_Click"/>
-        </StackPanel>
-        <!-- Imagen de fondo estirada a lo largo, con margen superior -->
-        <Image Source="/img/sismo3.jpg"
-               Grid.Row="1"
-               Stretch="Fill"
-               HorizontalAlignment="Stretch"
-               Margin="0,0,0,0"
-               Opacity="1" StretchDirection="UpOnly"/>
+
+        <!-- Header con logo y título -->
+        <Border Grid.Row="0" Background="#FF2E7BC7" Padding="20,15" Margin="0,0,0,20">
+            <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                <!-- Aquí puedes agregar un logo pequeño si tienes uno -->
+                <TextBlock Text="PractiSismo" 
+                          FontSize="24" 
+                          FontWeight="Bold" 
+                          Foreground="White" 
+                          VerticalAlignment="Center"/>
+                <TextBlock Text="Sistema de Monitoreo Sísmico" 
+                          FontSize="14" 
+                          Foreground="#FFB8D9F0" 
+                          Margin="20,5,0,0" 
+                          VerticalAlignment="Center"/>
+            </StackPanel>
+        </Border>
+
+        <!-- Contenido principal -->
+        <Grid Grid.Row="1">
+            <!-- Panel de control con botones -->
+            <StackPanel HorizontalAlignment="Left"
+                       Margin="10,10,0,313">
+                <!-- Botón principal (mantiene toda la funcionalidad original) -->
+                <Button x:Name="btnRegistrarRevision" 
+                       Content="Registrar resultado de revisión manual" 
+                       Click="btnRegistrarRevision_Click"
+                       Style="{StaticResource ModernButton}"
+                       MinWidth="300" Width="296"/>
+
+                <!-- Botón principal (mantiene toda la funcionalidad original) -->
+
+            </StackPanel>
+
+        </Grid>
     </Grid>
 </Window>
