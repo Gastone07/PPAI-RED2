@@ -18,8 +18,17 @@ namespace PPAI_REDSISMICA.Entidades
 
         private int idCambioEstado { get; set; }
 
+
         public CambioEstado(DateTime fechaHoraInicio, DateTime? fechaHoraFin, Estado estado)
         {
+            this.fechaHoraInicio = fechaHoraInicio;
+            this.fechaHoraFin = fechaHoraFin;
+            this.estado = estado;
+        }
+
+        public CambioEstado(int id, DateTime fechaHoraInicio, DateTime? fechaHoraFin, Estado estado)
+        {
+            this.idCambioEstado = id;
             this.fechaHoraInicio = fechaHoraInicio;
             this.fechaHoraFin = fechaHoraFin;
             this.estado = estado;

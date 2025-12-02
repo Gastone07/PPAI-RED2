@@ -97,6 +97,9 @@ public class EventoSismico
 
     public CambioEstado buscarCambioEstadoAbierto()
     {
+        //refrescamos la lista de cambiosEstados
+        CambioEstado = CambioEstadoPersistencia.obtenerCambiosEstadosXID(idEvento);
+
         foreach (var cambio in CambioEstado)
         {
             if (cambio.sosActual()) return cambio;
@@ -116,7 +119,6 @@ public class EventoSismico
 
         this.CambioEstado.Add(CambioEstado); // Actualiza el cambio de estado del evento sismico
 
-        //TENGO QUE HACER SET ESTADO
         this.setEstado(estado); // Actualiza el estado actual del evento sismico
 
         //Agrego a BD el cambio de estado y el set estado

@@ -162,7 +162,7 @@ namespace Controladores
 
             cambioEstadoNuevo = eventoSeleccionado.crearCambioEstado(estadoBloqueado, fechaHoraActual);
             
-            listadoCambiosEstado.Add(cambioEstadoNuevo);
+            //listadoCambiosEstado.Add(cambioEstadoNuevo);
 
             //fin paso 8
             buscarDetallesEventoSismico(eventoSeleccionado);
@@ -225,10 +225,15 @@ namespace Controladores
             //paso 14 al 17 con alternativas
             if (opcionCombo == "Rechazar evento")
             {
-                //estadoSeleccionado = Estado.esRechazado(listadoEstado);
                 estadoSeleccionado = listadoEstado.First(e => e.esRechazado());
                 cambioEstadoAbierto = eventoSelec.buscarCambioEstadoAbierto();
-                
+
+                // Validar que existe un cambio de estado abierto
+                if (cambioEstadoAbierto != null)
+                {
+                    eventoSelec.actualizarCambioEstado(fechaHoraActual, cambioEstadoAbierto);
+                }
+
                 cambioEstadoNuevo = eventoSelec.crearCambioEstado(estadoSeleccionado, fechaHoraActual);
                 listadoCambiosEstado.Add(cambioEstadoNuevo);
             }
@@ -236,15 +241,17 @@ namespace Controladores
             {
                 estadoSeleccionado = listadoEstado.First(e => e.esConfirmado());
                 cambioEstadoAbierto = eventoSelec.buscarCambioEstadoAbierto();
-                
+
+                eventoSelec.actualizarCambioEstado(fechaHoraActual, cambioEstadoAbierto);
                 cambioEstadoNuevo = eventoSelec.crearCambioEstado(estadoSeleccionado, fechaHoraActual);
                 listadoCambiosEstado.Add(cambioEstadoNuevo);
             }
-            else if (opcionCombo == "Solicitar revisi�n a experto")
+            else if (opcionCombo == "Solicitar revisión a experto")
             {
                 estadoSeleccionado = listadoEstado.First(e => e.esEstadoRevisadoPorExperto());
                 cambioEstadoAbierto = eventoSelec.buscarCambioEstadoAbierto();
-                
+
+                eventoSelec.actualizarCambioEstado(fechaHoraActual, cambioEstadoAbierto);
                 cambioEstadoNuevo = eventoSelec.crearCambioEstado(estadoSeleccionado, fechaHoraActual);
                 listadoCambiosEstado.Add(cambioEstadoNuevo);
             }

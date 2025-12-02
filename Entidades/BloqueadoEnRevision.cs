@@ -62,14 +62,16 @@ namespace PPAI_REDSISMICA.Entidades
         }
         public override void cambiarEstadoEventoSismico(DateTime fechaHora, CambioEstado cambio, EventoSismico evento) 
         {
-            cambio.setFechaHoraFin(fechaHora);        
+            cambio.setFechaHoraFin(fechaHora);                    
             CambioEstadoPersistencia.setHoraFin(fechaHora, cambio.getId());
+            
             Rechazado rechazado = crearEstadoRechazado();
             CambioEstado actual = crearNuevoCambioEstado(rechazado);
 
-            CambioEstadoPersistencia.insertarCambioEstado(idEstado,fechaHora, evento.getId());
+            evento.setEstado(rechazado);
+            evento.agregarCambioEstado(actual);
 
-            //return rechazado;
+
         }
     }
 }
